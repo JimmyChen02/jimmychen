@@ -1,0 +1,173 @@
+"use client";
+
+import { memo, useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { defaultViewport, fadeUpVariants } from "@/lib/animation";
+import type { Project } from "@/lib/projects";
+import { formatUpdatedAt } from "@/lib/projects";
+import { ExternalLink, Github, Star, Clock } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface DecoderProjectsProps {
+  projects: Project[];
+}
+
+function ProjectToken({
+  project,
+  index,
+}: {
+  project: Project;
+  index: number;
+}) {
+  return (
+    <motion.article
+      className="relative p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm hover:border-cyber-cyan/30 hover:bg-white/5 transition-all duration-300 group"
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={defaultViewport}
+      transition={{
+        delay: index * 0.15,
+        duration: 0.6,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      whileHover={{ y: -3 }}
+    >
+      {/* Output token index */}
+      <div className="flex items-start justify-between mb-3">
+        <span className="font-mono text-xs text-white/20">
+          output_token[{index}]
+        </span>
+        <div className="flex gap-2">
+          {project.githubUrl && (
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/30 hover:text-cyber-cyan transition-colors"
+              aria-label={`${project.title} on GitHub`}
+            >
+              <Github size={15} />
+            </a>
+          )}
+          {project.demoUrl && (
+            <a
+              href={project.demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/30 hover:text-cyber-cyan transition-colors"
+              aria-label={`${project.title} live demo`}
+            >
+              <ExternalLink size={15} />
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Title */}
+      <h3 className="font-semibold text-white group-hover:text-cyber-cyan transition-colors mb-2 text-base leading-snug">
+        {project.title}
+      </h3>
+
+      {/* Description */}
+      <p className="text-white/55 text-sm leading-relaxed mb-4">
+        {project.description}
+      </p>
+
+      {/* Tags */}
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {project.tags.slice(0, 5).map((tag) => (
+          <span
+            key={tag}
+            className="px-2 py-0.5 rounded text-xs font-mono border border-white/8 text-white/40 bg-white/3"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+
+      {/* Footer meta */}
+      <div className="flex items-center gap-4 text-xs text-white/25 font-mono">
+        {project.language && (
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-cyber-cyan/60" />
+            {project.language}
+          </span>
+        )}
+        {project.stars > 0 && (
+          <span className="flex items-center gap-1">
+            <Star size={11} />
+            {project.stars}
+          </span>
+        )}
+        <span className="flex items-center gap-1 ml-auto">
+          <Clock size={11} />
+          {formatUpdatedAt(project.updatedAt)}
+        </span>
+      </div>
+    </motion.article>
+  );
+}
+
+function DecoderProjects({ projects }: DecoderProjectsProps) {
+  const featured = projects.filter((p) => p.featured);
+
+  return (
+    <section
+      id="decoder"
+      className="relative py-32 px-6 flex flex-col items-center"
+      aria-label="Decoder: project generation"
+    >
+      {/* Stage header */}
+      <motion.div
+        className="text-center mb-16"
+        variants={fadeUpVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={defaultViewport}
+      >
+        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+          What I Build
+        </h2>
+        <p className="text-white/40 font-mono text-sm max-w-md mx-auto">
+          Decoding context → generating output tokens (projects)
+        </p>
+      </motion.div>
+
+      {/* Generating animation */}
+      <motion.div
+        className="font-mono text-xs text-white/20 mb-10 flex items-center gap-2"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={defaultViewport}
+        transition={{ delay: 0.2 }}
+      >
+        <motion.span
+          className="inline-block w-1.5 h-3 bg-cyber-purple/60"
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.8, repeat: Infinity }}
+        />
+        generating projects...
+      </motion.div>
+
+      {/* Project cards */}
+      <div className="w-full max-w-3xl grid sm:grid-cols-2 gap-5">
+        {featured.map((project, i) => (
+          <ProjectToken key={project.slug} project={project} index={i} />
+        ))}
+      </div>
+
+      {/* EOS token */}
+      <motion.p
+        className="mt-10 font-mono text-xs text-white/15 text-center"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={defaultViewport}
+        transition={{ delay: 0.8 }}
+      >
+        [EOS] — end of sequence
+      </motion.p>
+    </section>
+  );
+}
+
+export default memo(DecoderProjects);

@@ -1,0 +1,250 @@
+"use client";
+
+import { memo, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { siteConfig } from "@/data/site";
+import { defaultViewport, staggerContainer } from "@/lib/animation";
+
+// Each token gets a deterministic but "realistic-looking" embedding vector
+// Values are seeded per token so they look like real BERT floats
+const TOKEN_VECTORS: Record<string, number[]> = {
+  "Cornell CS":          [ 0.83, -0.41,  0.67,  0.29, -0.55,  0.91,  0.18, -0.73],
+  "AI / ML":             [ 0.95,  0.12, -0.38,  0.74,  0.61, -0.22,  0.88,  0.34],
+  "NLP":                 [ 0.78,  0.55, -0.19,  0.82, -0.44,  0.63,  0.07, -0.91],
+  "Research":            [ 0.41, -0.69,  0.88,  0.15,  0.73, -0.37,  0.52,  0.66],
+  "Software Engineering":[ 0.62,  0.38,  0.51, -0.44,  0.77,  0.19, -0.63,  0.85],
+  "Systems":             [-0.22,  0.91,  0.34, -0.68,  0.45,  0.73, -0.11,  0.57],
+  "Product Builder":     [ 0.55,  0.27, -0.61,  0.83,  0.38, -0.74,  0.92,  0.16],
+};
+
+const DIMS = 8; // displayed dims (real BERT is 768)
+
+/** Colour a float value: positive → cyan, negative → purple, neutral → white */
+function valueColor(v: number): string {
+  if (v > 0.5)  return "text-cyber-cyan";
+  if (v < -0.3) return "text-purple-400";
+  return "text-white/50";
+}
+
+/** Heatmap cell opacity based on magnitude */
+function heatOpacity(v: number): number {
+  return Math.min(0.9, Math.abs(v) * 0.85 + 0.1);
+}
+
+// ─────────────────────────────────────────────────────────
+// Single token embedding card
+// ─────────────────────────────────────────────────────────
+function TokenEmbedCard({
+  label,
+  vector,
+  index,
+  revealed,
+}: {
+  label: string;
+  vector: number[];
+  index: number;
+  revealed: boolean;
+}) {
+  const [showNums, setShowNums] = useState(false);
+
+  useEffect(() => {
+    if (!revealed) return;
+    const t = setTimeout(() => setShowNums(true), index * 120 + 300);
+    return () => clearTimeout(t);
+  }, [revealed, index]);
+
+  return (
+    <motion.div
+      className="rounded-lg border border-white/8 bg-white/[0.02] overflow-hidden"
+      initial={{ opacity: 0, y: 18 }}
+      animate={revealed ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay: index * 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {/* Token label bar */}
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-white/5 bg-white/[0.015]">
+        <span className="font-mono text-[10px] text-white/20 w-4 shrink-0">{index}</span>
+        <span className="w-px h-3 bg-white/10 shrink-0" />
+        <span className="font-mono text-xs text-white/70 truncate">{label}</span>
+        <span className="ml-auto font-mono text-[10px] text-white/15 shrink-0">d=768</span>
+      </div>
+
+      {/* Vector heatmap + numbers */}
+      <div className="px-3 py-2.5 space-y-1.5">
+        {/* Heatmap bar */}
+        <div className="flex gap-0.5 h-4">
+          {vector.map((v, i) => (
+            <motion.div
+              key={i}
+              className="flex-1 rounded-sm"
+              style={{
+                backgroundColor: v >= 0
+                  ? `rgba(6,182,212,${heatOpacity(v)})`
+                  : `rgba(139,92,246,${heatOpacity(v)})`,
+              }}
+              initial={{ scaleY: 0, originY: 1 }}
+              animate={showNums ? { scaleY: 1 } : {}}
+              transition={{ delay: i * 0.04, duration: 0.3, ease: "easeOut" }}
+            />
+          ))}
+        </div>
+
+        {/* Float values */}
+        <div className="flex gap-1 flex-wrap">
+          <AnimatePresence>
+            {showNums && vector.map((v, i) => (
+              <motion.span
+                key={i}
+                className={`font-mono text-[9px] tabular-nums ${valueColor(v)}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.035 }}
+              >
+                {v.toFixed(2)}
+                {i < vector.length - 1 && <span className="text-white/15">,</span>}
+              </motion.span>
+            ))}
+          </AnimatePresence>
+          {showNums && (
+            <span className="font-mono text-[9px] text-white/15">…</span>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────
+const skillColors: Record<string, string> = {
+  lang:      "border-cyber-cyan/25 text-cyber-cyan/80 bg-cyber-cyan/4",
+  framework: "border-white/15 text-white/60 bg-white/3",
+  ml:        "border-amber-400/25 text-amber-400/80 bg-amber-400/4",
+  data:      "border-teal-400/25 text-teal-400/80 bg-teal-400/4",
+  infra:     "border-sky-400/25 text-sky-400/80 bg-sky-400/4",
+};
+
+function EmbeddingLayer() {
+  const [revealed, setRevealed] = useState(false);
+
+  const tokens = siteConfig.tokens;
+
+  return (
+    <section
+      id="embedding"
+      className="relative py-32 px-6 flex flex-col items-center"
+      aria-label="Embedding layer"
+    >
+      {/* Stage header */}
+      <motion.div
+        className="text-center mb-16"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={defaultViewport}
+        transition={{ duration: 0.5 }}
+        onViewportEnter={() => setRevealed(true)}
+      >
+        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+          Token → Embedding Vector
+        </h2>
+        <p className="text-white/35 font-mono text-sm">
+          BERT embedding · d<sub>model</sub> = 768
+        </p>
+      </motion.div>
+
+      <div className="w-full max-w-3xl space-y-14">
+
+        {/* ── BERT model label ─────────────────────────── */}
+        <motion.div
+          className="flex flex-col items-center gap-3"
+          initial={{ opacity: 0 }}
+          animate={revealed ? { opacity: 1 } : {}}
+          transition={{ delay: 0.1 }}
+        >
+          <div className="px-5 py-2.5 rounded-lg border border-cyber-cyan/20 bg-cyber-cyan/5 font-mono text-sm text-cyber-cyan/70 flex items-center gap-3">
+            <motion.div
+              className="w-1.5 h-1.5 rounded-full bg-cyber-cyan"
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+            BertModel · bert-base-uncased
+            <span className="text-white/20 text-xs ml-1">110M params</span>
+          </div>
+
+          {/* Downward connector */}
+          <div className="flex flex-col items-center gap-1 opacity-20" aria-hidden="true">
+            {[0,1,2].map(i => <div key={i} className="w-px h-3 bg-white" />)}
+            <div className="w-0 h-0 border-l-[4px] border-r-[4px] border-t-[6px] border-transparent border-t-white" />
+          </div>
+        </motion.div>
+
+        {/* ── Embedding cards grid ─────────────────────── */}
+        <div>
+          <motion.p
+            className="font-mono text-xs text-white/20 uppercase tracking-widest mb-5 text-center"
+            initial={{ opacity: 0 }}
+            animate={revealed ? { opacity: 1 } : {}}
+            transition={{ delay: 0.2 }}
+          >
+            Output — one 768-dim vector per token
+          </motion.p>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            {tokens.map((token, i) => (
+              <TokenEmbedCard
+                key={token.id}
+                label={token.label}
+                vector={TOKEN_VECTORS[token.label] ?? Array(DIMS).fill(0)}
+                index={i}
+                revealed={revealed}
+              />
+            ))}
+          </div>
+
+          {/* Shape annotation */}
+          <motion.p
+            className="font-mono text-xs text-white/15 text-center mt-5"
+            initial={{ opacity: 0 }}
+            animate={revealed ? { opacity: 1 } : {}}
+            transition={{ delay: tokens.length * 0.1 + 0.6 }}
+          >
+            output_shape = [{tokens.length}, 768] &nbsp;·&nbsp; dtype=float32
+          </motion.p>
+        </div>
+
+        {/* ── Skills / Technical depth ─────────────────── */}
+        <div>
+          <motion.p
+            className="font-mono text-xs text-white/20 uppercase tracking-widest mb-5 text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={defaultViewport}
+          >
+            Technical Skills
+          </motion.p>
+          <motion.div
+            className="flex flex-wrap justify-center gap-2"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={defaultViewport}
+          >
+            {siteConfig.skills.map((skill, i) => (
+              <motion.span
+                key={skill.name}
+                variants={{
+                  hidden: { opacity: 0, scale: 0.85 },
+                  visible: { opacity: 1, scale: 1, transition: { delay: i * 0.04, duration: 0.3 } },
+                }}
+                className={`px-3 py-1.5 rounded-md border font-mono text-xs ${skillColors[skill.category] ?? skillColors.lang}`}
+                whileHover={{ scale: 1.04 }}
+              >
+                {skill.name}
+              </motion.span>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default memo(EmbeddingLayer);

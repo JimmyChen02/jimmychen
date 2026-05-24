@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   CSS Custom Properties
+   ========================================================= */
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  /* Core palette */
+  --color-bg: #020408;
+  --color-navy: #030d1a;
+  --color-cyan: #06b6d4;
+  --color-purple: #8b5cf6;
+  --color-blue: #0ea5e9;
+
+  /* Animation durations */
+  --duration-fast: 200ms;
+  --duration-base: 400ms;
+  --duration-slow: 700ms;
+}
+
+/* =========================================================
+   Base resets
+   ========================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #020408;
+  color: #f0f4f8;
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   Typography helpers
+   ========================================================= */
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* =========================================================
+   Glassmorphism card utility
+   ========================================================= */
+.glass-card {
+  background: rgba(10, 20, 40, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(6, 182, 212, 0.15);
+}
+
+/* =========================================================
+   Glow text utilities
+   ========================================================= */
+.text-glow-cyan {
+  text-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+}
+
+.text-glow-purple {
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+}
+
+/* =========================================================
+   Scrollbar (WebKit)
+   ========================================================= */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #020408;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.4);
+}
+
+/* =========================================================
+   Selection
+   ========================================================= */
+::selection {
+  background: rgba(6, 182, 212, 0.25);
+  color: #fff;
+}
+
+/* =========================================================
+   Focus visible (accessibility)
+   ========================================================= */
+:focus-visible {
+  outline: 2px solid rgba(6, 182, 212, 0.7);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* =========================================================
+   Reduced-motion: disable all CSS animations and transitions
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep framer-motion layout stable by zeroing transitions */
+  [data-framer-appear-id] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* =========================================================
+   Pipeline connector pulse animation (pure CSS fallback)
+   ========================================================= */
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+.pulse-dot {
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+/* =========================================================
+   Print styles — show clean version for resume printing
+   ========================================================= */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
