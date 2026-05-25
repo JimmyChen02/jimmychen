@@ -3,16 +3,15 @@
 import { useEffect, useRef } from "react";
 
 /**
- * useScrollify — scrollify.js-style full-page scroll snapping.
+ * useScrollify — reliable full-page scroll snapping.
  *
- * Behaviour:
- * - One wheel tick → advance to next / prev section.
- * - Snapping is DISABLED once the user scrolls past the "output" section
- *   (i.e. anything after the transformer pipeline becomes free-scroll).
- * - For sections taller than the viewport, natural in-section scroll is
- *   preserved; the hook only intercepts at the top/bottom boundary.
- * - A cooldown prevents rapid-fire section jumps.
- * - Touch swipe (mobile) is also supported.
+ * Design:
+ * - Tracks current section index as a ref (not inferred from DOM each time).
+ * - One wheel/swipe tick → next or prev section.
+ * - Tall sections (taller than viewport) allow natural scroll inside them;
+ *   snapping only fires at their top/bottom boundary.
+ * - Releases completely once the user scrolls past the output section.
+ * - Cooldown prevents rapid-fire jumps.
  */
 
 const SECTION_IDS = [
@@ -23,112 +22,133 @@ const SECTION_IDS = [
   "attention",
   "feedforward",
   "decoder",
-  "softmax",
   "output",
 ] as const;
 
-const LAST_SNAP_INDEX = SECTION_IDS.length - 1; // "output" is the last snapped section
+const LAST_IDX    = SECTION_IDS.length - 1;
+const COOLDOWN_MS = 900;   // ms — matches smooth-scroll settle time
+const MIN_DELTA   = 5;     // ignore tiny trackpad micro-scrolls
+const MIN_SWIPE   = 40;    // px — minimum touch swipe distance
+const EDGE_PX     = 48;    // px — boundary tolerance for tall sections
 
-/** Tolerance in px — how close to a boundary counts as "at the edge" */
-const EDGE_PX = 8;
-/** Cooldown between snaps (ms) */
-const COOLDOWN_MS = 800;
-/**
- * Minimum wheel deltaY to register as intentional.
- * Kept low (4) so trackpad users don't need to scroll hard.
- */
-const MIN_DELTA = 4;
-/** Minimum vertical swipe distance to trigger on touch */
-const MIN_SWIPE = 40;
+// ─────────────────────────────────────────────────────────────────────────────
 
-// ─────────────────────────────────────────────────────────
+function scrollToSection(index: number) {
+  const id = SECTION_IDS[Math.max(0, Math.min(index, LAST_IDX))];
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
-function getActiveIndex(): number {
+/** Re-sync index ref to whichever section is most visible right now */
+function computeActiveIndex(): number {
   const mid = window.innerHeight / 2;
   let best = 0;
   let bestDist = Infinity;
-
   SECTION_IDS.forEach((id, i) => {
     const el = document.getElementById(id);
     if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const sectionMid = rect.top + rect.height / 2;
-    const dist = Math.abs(sectionMid - mid);
+    const r = el.getBoundingClientRect();
+    // Use top of section if it's taller than viewport (content starts at top)
+    const anchor = r.height > window.innerHeight ? r.top + window.innerHeight / 2 : r.top + r.height / 2;
+    const dist = Math.abs(anchor - mid);
     if (dist < bestDist) { bestDist = dist; best = i; }
   });
-
   return best;
 }
 
-/** True if the user has scrolled fully past the output section */
-function isPastPipeline(): boolean {
-  const outputEl = document.getElementById("output");
-  if (!outputEl) return false;
-  // output section's bottom is above the viewport → user has scrolled past it
-  return outputEl.getBoundingClientRect().bottom < -EDGE_PX;
-}
 
-function scrollToSection(index: number) {
-  const id = SECTION_IDS[Math.max(0, Math.min(index, LAST_SNAP_INDEX))];
-  const el = document.getElementById(id);
-  if (!el) return;
-  // scroll-margin-top (64px navbar) is set in globals.css, so block:"start" is correct
-  el.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-/**
- * Returns true when the wheel/touch event should be intercepted.
- * - Never intercepts after the pipeline ends.
- * - For tall sections: only intercepts at their top/bottom edge.
- */
-function shouldIntercept(delta: number): boolean {
-  // Let the user scroll freely once past the output section
-  if (isPastPipeline()) return false;
-
-  const idx = getActiveIndex();
-
-  // If on the last section and scrolling DOWN, don't intercept —
-  // let the user drift naturally into the portfolio section below.
-  if (idx === LAST_SNAP_INDEX && delta > 0) return false;
-
-  const el = document.getElementById(SECTION_IDS[idx]);
-  if (!el) return true;
-
-  const rect = el.getBoundingClientRect();
-  const tallerThanViewport = el.scrollHeight > window.innerHeight + EDGE_PX;
-
-  // Short section → always snap
-  if (!tallerThanViewport) return true;
-
-  // Tall section → only snap at boundary
-  if (delta > 0 && rect.bottom <= window.innerHeight + EDGE_PX) return true;
-  if (delta < 0 && rect.top    >= -EDGE_PX)                      return true;
-  return false;
-}
-
-// ─────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 
 export function useScrollify() {
   const cooldown    = useRef(false);
+  const idxRef      = useRef(0);          // tracked section index
   const touchStartY = useRef(0);
 
   useEffect(() => {
-    // ── Wheel ──────────────────────────────────────────────
-    function onWheel(e: WheelEvent) {
-      if (cooldown.current) { e.preventDefault(); return; }
-      if (Math.abs(e.deltaY) < MIN_DELTA) return;
-      if (!shouldIntercept(e.deltaY)) return;
+    // Sync idxRef on every scroll so tall-section natural scrolling keeps it current
+    function syncIdx() {
+      idxRef.current = computeActiveIndex();
+    }
+    window.addEventListener("scroll", syncIdx, { passive: true });
 
-      e.preventDefault();
+    // ── Shared snap logic ──────────────────────────────────
+    function isPastPipeline(): boolean {
+      const el = document.getElementById("output");
+      if (!el) return false;
+      return el.getBoundingClientRect().bottom < 0;
+    }
+
+    function trySnap(delta: number) {
+      if (cooldown.current) return;
+      if (isPastPipeline()) return;
+
+      // Re-entering the pipeline from below (scrolling up from portfolio):
+      // output section is partially above viewport → snap to it first
+      if (delta < 0) {
+        const outputEl = document.getElementById("output");
+        if (outputEl) {
+          const r = outputEl.getBoundingClientRect();
+          if (r.top < 0 && r.bottom >= 0) {
+            cooldown.current = true;
+            idxRef.current = LAST_IDX;
+            scrollToSection(LAST_IDX);
+            setTimeout(() => { cooldown.current = false; }, COOLDOWN_MS);
+            return;
+          }
+        }
+      }
+
+      syncIdx();
+      const idx = idxRef.current;
+
+      // At last section scrolling down → release into portfolio
+      if (idx === LAST_IDX && delta > 0) return;
+
+      const el = document.getElementById(SECTION_IDS[idx]);
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const tall = el.scrollHeight > window.innerHeight + EDGE_PX;
+
+      if (tall) {
+        // Inside a tall section — only snap at the boundary
+        const atBottom = delta > 0 && rect.bottom <= window.innerHeight + EDGE_PX;
+        const atTop    = delta < 0 && rect.top    >= -EDGE_PX;
+        if (!atBottom && !atTop) return;
+      }
+
+      // Fire snap
       cooldown.current = true;
-
-      const current = getActiveIndex();
-      const next = e.deltaY > 0
-        ? Math.min(current + 1, LAST_SNAP_INDEX)
-        : Math.max(current - 1, 0);
-
+      const next = delta > 0
+        ? Math.min(idx + 1, LAST_IDX)
+        : Math.max(idx - 1, 0);
+      idxRef.current = next;
       scrollToSection(next);
       setTimeout(() => { cooldown.current = false; }, COOLDOWN_MS);
+    }
+
+    // ── Wheel ──────────────────────────────────────────────
+    function onWheel(e: WheelEvent) {
+      if (Math.abs(e.deltaY) < MIN_DELTA) return;
+      if (isPastPipeline()) return;
+
+      syncIdx();
+      const idx = idxRef.current;
+      const el  = document.getElementById(SECTION_IDS[idx]);
+      const rect = el?.getBoundingClientRect();
+      const tall = el ? el.scrollHeight > window.innerHeight + EDGE_PX : false;
+
+      // Inside a tall section and not at boundary → let browser scroll naturally
+      if (tall && rect) {
+        const atBottom = e.deltaY > 0 && rect.bottom <= window.innerHeight + EDGE_PX;
+        const atTop    = e.deltaY < 0 && rect.top    >= -EDGE_PX;
+        if (!atBottom && !atTop) return; // don't intercept
+      }
+
+      if (idx === LAST_IDX && e.deltaY > 0) return; // release at end
+
+      e.preventDefault();
+      trySnap(e.deltaY);
     }
 
     // ── Touch ──────────────────────────────────────────────
@@ -137,38 +157,18 @@ export function useScrollify() {
     }
 
     function onTouchEnd(e: TouchEvent) {
-      if (cooldown.current) return;
       const dy = touchStartY.current - e.changedTouches[0].clientY;
       if (Math.abs(dy) < MIN_SWIPE) return;
-      if (!shouldIntercept(dy)) return;
-
-      cooldown.current = true;
-      const current = getActiveIndex();
-      const next = dy > 0
-        ? Math.min(current + 1, LAST_SNAP_INDEX)
-        : Math.max(current - 1, 0);
-
-      scrollToSection(next);
-      setTimeout(() => { cooldown.current = false; }, COOLDOWN_MS);
+      trySnap(dy);
     }
 
     // ── Keyboard ──────────────────────────────────────────
     function onKeyDown(e: KeyboardEvent) {
-      if (cooldown.current) return;
-      if (isPastPipeline()) return;
       const down = e.key === "ArrowDown" || e.key === "PageDown";
       const up   = e.key === "ArrowUp"   || e.key === "PageUp";
       if (!down && !up) return;
-
       e.preventDefault();
-      cooldown.current = true;
-      const current = getActiveIndex();
-      const next = down
-        ? Math.min(current + 1, LAST_SNAP_INDEX)
-        : Math.max(current - 1, 0);
-
-      scrollToSection(next);
-      setTimeout(() => { cooldown.current = false; }, COOLDOWN_MS);
+      trySnap(down ? 1 : -1);
     }
 
     window.addEventListener("wheel",      onWheel,      { passive: false });
@@ -177,6 +177,7 @@ export function useScrollify() {
     window.addEventListener("keydown",    onKeyDown);
 
     return () => {
+      window.removeEventListener("scroll",     syncIdx);
       window.removeEventListener("wheel",      onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchend",   onTouchEnd);
