@@ -66,6 +66,7 @@ export const siteConfig = {
 
   // About section
   about: {
+    portraitUrl: "https://github.com/JimmyChen02.png?size=600",
     paragraphs: [
       "I'm a Computer Science student at Cornell Engineering, interested in the space where AI systems meet real-world problems.",
       "My work spans NLP, machine learning systems, backend infrastructure, and applied research. I care about building things that are technically rigorous and genuinely useful.",
