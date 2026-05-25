@@ -41,7 +41,7 @@ export default async function ProjectsPage() {
   }
 
   return (
-    <main className="min-h-screen pt-24 px-6">
+    <main className="min-h-screen pt-24 pb-16 sm:pb-24 px-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-14">

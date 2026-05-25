@@ -18,9 +18,8 @@ export const STAGES: Stage[] = [
   { id: "encoder", label: "Encoder", shortLabel: "Enc", color: "teal" },
   { id: "attention", label: "Multi-Head Attention", shortLabel: "Attn", color: "amber" },
   { id: "feedforward", label: "Feed-Forward", shortLabel: "FFN", color: "amber" },
-  { id: "decoder", label: "Decoder", shortLabel: "Dec", color: "purple" },
-  { id: "softmax", label: "Softmax", shortLabel: "Soft", color: "cyan" },
-  { id: "output", label: "Output", shortLabel: "Out", color: "cyan" },
+  { id: "decoder", label: "Output", shortLabel: "Out", color: "purple" },
+  { id: "output", label: "Generated", shortLabel: "Gen", color: "cyan" },
 ];
 
 const colorStyles: Record<Stage["color"], { dot: string; text: string; line: string; glow: string }> = {

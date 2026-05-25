@@ -1,12 +1,12 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { siteConfig } from "@/data/site";
-import { defaultViewport, onceViewport } from "@/lib/animation";
 
 const TOKENS = siteConfig.tokens;
 const rawText = siteConfig.hero.inputSequence; // "Jimmy Chen"
+const stageViewport = { once: false, amount: 0.55, margin: "-5% 0px -5% 0px" } as const;
 
 type Phase = "idle" | "scanning" | "cutting" | "tokens";
 
@@ -159,22 +159,47 @@ function BpeChip({
 // ─────────────────────────────────────────────────────────
 function TokenizationLayer() {
   const [phase, setPhase] = useState<Phase>("idle");
+  const [inView, setInView] = useState(false);
+  const timersRef = useRef<number[]>([]);
+
+  function clearTimers() {
+    timersRef.current.forEach((timer) => window.clearTimeout(timer));
+    timersRef.current = [];
+  }
+
+  function resetAnimation() {
+    clearTimers();
+    setPhase("idle");
+  }
 
   function startAnimation() {
-    if (phase !== "idle") return;
+    clearTimers();
     setPhase("scanning");
-    setTimeout(() => setPhase("cutting"), 2000);   // scan takes 1.8s + small buffer
-    setTimeout(() => setPhase("tokens"),  4200);   // cutting phase holds for ~2.2s
+    timersRef.current = [
+      window.setTimeout(() => setPhase("cutting"), 2000),
+      window.setTimeout(() => setPhase("tokens"), 4200),
+    ];
   }
+
+  useEffect(() => resetAnimation, []);
 
   const cutting  = phase === "cutting";
   const isTokens = phase === "tokens";
 
   return (
-    <section
+    <motion.section
       id="tokenization"
-      className="relative min-h-screen px-6 flex flex-col items-center justify-center"
+      className="relative min-h-[82svh] lg:min-h-[84svh] px-6 pt-20 pb-8 lg:pt-24 lg:pb-10 flex flex-col items-center justify-center"
       aria-label="Tokenization layer"
+      onViewportEnter={() => {
+        setInView(true);
+        startAnimation();
+      }}
+      onViewportLeave={() => {
+        setInView(false);
+        resetAnimation();
+      }}
+      viewport={stageViewport}
     >
       {/* Outer layout wrapper — shifts upward smoothly as content grows */}
       <motion.div layout className="flex flex-col items-center w-full max-w-2xl">
@@ -182,12 +207,10 @@ function TokenizationLayer() {
       {/* Header */}
       <motion.div
         layout
-        className="text-center mb-10"
+        className="text-center mb-8"
         initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={onceViewport}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
-        onViewportEnter={startAnimation}
       >
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
           Splitting into Tokens
@@ -199,10 +222,10 @@ function TokenizationLayer() {
 
       {/* LayoutGroup lets layoutId animate across the text-box → chip-row transition */}
       <LayoutGroup>
-        <motion.div layout className="w-full space-y-10">
+        <motion.div layout className="w-full space-y-7 lg:space-y-8">
 
           {/* ── Raw input box ──────────────────────────────── */}
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-2.5">
             <p className="font-mono text-xs text-white/20 uppercase tracking-widest">Input</p>
 
             <motion.div
@@ -255,7 +278,7 @@ function TokenizationLayer() {
           <AnimatePresence>
             {isTokens && (
               <motion.div
-                className="flex flex-col items-center gap-5"
+                className="flex flex-col items-center gap-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.25 }}
@@ -266,7 +289,7 @@ function TokenizationLayer() {
                   <span className="w-8 h-px bg-white/10" />
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-3">
+                <div className="flex flex-wrap justify-center gap-2.5">
                   {/* [CLS] — flies in from left */}
                   <BpeChip text="[CLS]" index={0} variant="purple" enterDelay={0.04} enterFrom={-1} />
 
@@ -295,7 +318,7 @@ function TokenizationLayer() {
                 aria-hidden="true"
               >
                 {[0, 1, 2].map(i => (
-                  <div key={i} className="w-px h-3 bg-white/50" />
+                  <div key={i} className="w-px h-2.5 bg-white/50" />
                 ))}
                 <div className="w-0 h-0 border-l-[4px] border-r-[4px] border-t-[6px] border-transparent border-t-white/50" />
               </motion.div>
@@ -306,7 +329,7 @@ function TokenizationLayer() {
           <AnimatePresence>
             {isTokens && (
               <motion.div
-                className="flex flex-col items-center gap-5"
+                className="flex flex-col items-center gap-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
@@ -317,7 +340,7 @@ function TokenizationLayer() {
                   <span className="w-8 h-px bg-white/10" />
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-2.5">
+                <div className="flex flex-wrap justify-center gap-2">
                   {TOKENS.map((token, i) => (
                     <motion.div
                       key={token.id}
@@ -358,7 +381,7 @@ function TokenizationLayer() {
         </motion.div>
       </LayoutGroup>
       </motion.div>
-    </section>
+    </motion.section>
   );
 }
 

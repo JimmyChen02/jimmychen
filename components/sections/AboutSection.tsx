@@ -121,7 +121,7 @@ function AboutSection() {
           </div>
 
           {/* Skill badge row — driven by siteConfig.skills */}
-          <div className="mt-auto pt-2">
+          <div className="pt-2">
             <p className="font-mono text-[10px] text-white/25 uppercase tracking-widest mb-3">
               Skills
             </p>

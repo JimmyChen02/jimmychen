@@ -26,25 +26,22 @@ function ProjectCard({
   index,
   scores,
   overallScore,
-  horizontal = false,
 }: {
   project: Project;
   index: number;
   scores: Record<string, number>;
   overallScore: number;
-  horizontal?: boolean;
 }) {
   return (
     <motion.article
-      className={`relative p-5 rounded-xl border border-white/8 bg-white/[0.02] backdrop-blur-sm hover:border-cyber-cyan/25 transition-all duration-300 group ${horizontal ? "sm:flex sm:gap-6 sm:items-start" : ""}`}
+      className="relative p-5 rounded-xl border border-white/8 bg-white/[0.02] backdrop-blur-sm hover:border-cyber-cyan/25 transition-all duration-300 group flex flex-col h-full"
       initial={{ opacity: 0, y: 32, scale: 0.97 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={defaultViewport}
       transition={{ delay: index * 0.1, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ y: -2 }}
     >
-      {/* Left column (or full card when not horizontal) */}
-      <div className={horizontal ? "sm:flex-1 min-w-0" : ""}>
+      <div className="flex flex-col flex-1">
       {/* Header row */}
       <div className="flex items-start justify-between mb-2">
         <span className="font-mono text-[10px] text-white/20">output_token[{index}]</span>
@@ -91,15 +88,14 @@ function ProjectCard({
       <h3 className="font-semibold text-white group-hover:text-cyber-cyan transition-colors mb-1.5 text-base leading-snug">
         {project.title}
       </h3>
-      <p className="text-white/50 text-sm leading-relaxed mb-4">
+      <p className="text-white/50 text-sm leading-relaxed mb-4 flex-1">
         {project.description}
       </p>
 
-      </div>{/* end left col */}
+      </div>
 
-      {/* Score bars — right col when horizontal, inline otherwise */}
-      <div className={horizontal ? "sm:w-44 sm:shrink-0 sm:pt-1" : "space-y-1.5 mb-4"}>
-        <div className={horizontal ? "sm:space-y-1.5" : ""}>
+      {/* Score bars */}
+      <div className="space-y-1.5 mb-4">
         {SCORE_DIMS.map((dim, i) => (
           <div key={dim} className="flex items-center gap-2">
             <span className="font-mono text-[10px] text-white/25 w-24 text-right shrink-0">{dim}</span>
@@ -117,7 +113,6 @@ function ProjectCard({
             </span>
           </div>
         ))}
-        </div>
       </div>
 
       {/* Tags + meta */}
@@ -166,13 +161,12 @@ function DecoderProjects({ projects }: DecoderProjectsProps) {
           const sm = scoreMap[project.slug];
           const isLastOdd = i === featured.length - 1 && featured.length % 2 !== 0;
           return (
-            <div key={project.slug} className={isLastOdd ? "sm:col-span-2" : ""}>
+            <div key={project.slug} className={`h-full${isLastOdd ? " sm:col-span-2 sm:w-[calc(50%-10px)] sm:mx-auto" : ""}`}>
               <ProjectCard
                 project={project}
                 index={i}
                 scores={sm?.scores ?? {}}
                 overallScore={sm?.overallScore ?? 0}
-                horizontal={isLastOdd}
               />
             </div>
           );

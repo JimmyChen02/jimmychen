@@ -22,7 +22,6 @@ const EncoderBlock      = dynamic(() => import("./EncoderBlock"));
 const AttentionHeads    = dynamic(() => import("./AttentionHeads"));
 const FeedForwardLayer  = dynamic(() => import("./FeedForwardLayer"));
 const DecoderProjects   = dynamic(() => import("./DecoderProjects"));
-const SoftmaxRanking    = dynamic(() => import("./SoftmaxRanking"));
 const OutputLayer       = dynamic(() => import("./OutputLayer"));
 
 interface TransformerPortfolioProps {
@@ -79,12 +78,7 @@ function TransformerPortfolio({ projects }: TransformerPortfolioProps) {
           <DecoderProjects projects={projects} />
         </Suspense>
 
-        {/* Stage 7: Softmax */}
-        <Suspense fallback={<StageSkeleton />}>
-          <SoftmaxRanking />
-        </Suspense>
-
-        {/* Stage 8: Output */}
+        {/* Stage 7: Output */}
         <Suspense fallback={<StageSkeleton />}>
           <OutputLayer />
         </Suspense>

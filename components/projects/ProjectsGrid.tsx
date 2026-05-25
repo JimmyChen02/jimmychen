@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, memo } from "react";
+import { memo } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Project } from "@/lib/projects";
 import ProjectCard from "./ProjectCard";
@@ -14,8 +15,7 @@ interface ProjectsGridProps {
 const INITIAL_COUNT = 6;
 
 function ProjectsGrid({ projects, showAll = false }: ProjectsGridProps) {
-  const [expanded, setExpanded] = useState(showAll);
-  const displayedProjects = expanded ? projects : projects.slice(0, INITIAL_COUNT);
+  const displayedProjects = showAll ? projects : projects.slice(0, INITIAL_COUNT);
   const hasMore = projects.length > INITIAL_COUNT;
 
   if (projects.length === 0) {
@@ -55,7 +55,7 @@ function ProjectsGrid({ projects, showAll = false }: ProjectsGridProps) {
         ))}
       </motion.div>
 
-      {hasMore && !expanded && (
+      {hasMore && !showAll && (
         <motion.div
           className="flex justify-center mt-10"
           variants={fadeUpVariants}
@@ -63,12 +63,12 @@ function ProjectsGrid({ projects, showAll = false }: ProjectsGridProps) {
           whileInView="visible"
           viewport={defaultViewport}
         >
-          <button
-            onClick={() => setExpanded(true)}
+          <Link
+            href="/projects"
             className="px-6 py-2.5 rounded-lg border border-white/15 text-white/60 hover:text-white hover:border-white/30 text-sm transition-all duration-200 font-mono"
           >
-            Show all {projects.length} projects
-          </button>
+            Show {projects.length} more projects
+          </Link>
         </motion.div>
       )}
     </div>

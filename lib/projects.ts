@@ -93,31 +93,25 @@ function mergeProject(repo: EnrichedRepo, override: ProjectOverride | undefined)
  * 4. Hidden overrides are filtered out.
  */
 export function mergeProjects(repos: EnrichedRepo[]): Project[] {
-  const repoMap = new Map(repos.map((r) => [r.name, r]));
+  const overrideMap = new Map(projectOverrides.map((override) => [override.slug, override]));
   const seen = new Set<string>();
   const projects: Project[] = [];
 
-  // Process overrides in order
-  for (const override of projectOverrides) {
-    if (override.hidden) continue;
-    const repo = repoMap.get(override.slug);
-    if (repo) {
-      projects.push(mergeProject(repo, override));
-    } else {
-      // Override exists but no matching GitHub repo — show from local data
-      projects.push(projectFromOverride(override));
-    }
-    seen.add(override.slug);
-  }
-
-  // Append remaining GitHub repos that aren't in overrides
+  // Preserve the incoming GitHub repo order (pinned repos first if available).
   for (const repo of repos) {
-    if (!seen.has(repo.name)) {
-      projects.push(mergeProject(repo, undefined));
-    }
+    const override = overrideMap.get(repo.name);
+    if (override?.hidden) continue;
+    projects.push(mergeProject(repo, override));
+    seen.add(repo.name);
   }
 
-  return projects.sort((a, b) => a.order - b.order);
+  // Append local-only overrides that have no matching GitHub repo.
+  for (const override of projectOverrides) {
+    if (override.hidden || seen.has(override.slug)) continue;
+    projects.push(projectFromOverride(override));
+  }
+
+  return projects;
 }
 
 /** Return only featured projects, ordered by the `order` field. */

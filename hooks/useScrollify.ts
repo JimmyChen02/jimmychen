@@ -26,9 +26,9 @@ const SECTION_IDS = [
 ] as const;
 
 const LAST_IDX    = SECTION_IDS.length - 1;
-const COOLDOWN_MS = 900;   // ms — matches smooth-scroll settle time
-const MIN_DELTA   = 5;     // ignore tiny trackpad micro-scrolls
-const MIN_SWIPE   = 40;    // px — minimum touch swipe distance
+const COOLDOWN_MS = 950;   // ms — matches smooth-scroll settle time
+const MIN_DELTA   = 8;     // ignore micro-scrolls but catch real intent
+const MIN_SWIPE   = 50;    // px — minimum touch swipe distance
 const EDGE_PX     = 48;    // px — boundary tolerance for tall sections
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -65,8 +65,9 @@ export function useScrollify() {
   const touchStartY = useRef(0);
 
   useEffect(() => {
-    // Sync idxRef on every scroll so tall-section natural scrolling keeps it current
+    // Sync idxRef on scroll — but never during a snap animation or it corrupts the index
     function syncIdx() {
+      if (cooldown.current) return;
       idxRef.current = computeActiveIndex();
     }
     window.addEventListener("scroll", syncIdx, { passive: true });
@@ -131,6 +132,7 @@ export function useScrollify() {
     function onWheel(e: WheelEvent) {
       if (Math.abs(e.deltaY) < MIN_DELTA) return;
       if (isPastPipeline()) return;
+      if (cooldown.current) { e.preventDefault(); return; } // block native scroll during snap
 
       syncIdx();
       const idx = idxRef.current;

@@ -8,10 +8,10 @@ import { defaultViewport, fadeUpVariants } from "@/lib/animation";
 const SCORE_DIMENSIONS = ["AI/ML Fit", "Systems Depth", "Product Polish", "Research Impact"] as const;
 
 const dimColors: Record<string, string> = {
-  "AI/ML Fit": "from-cyber-cyan to-cyber-purple",
-  "Systems Depth": "from-sky-400 to-cyber-cyan",
-  "Product Polish": "from-cyber-purple to-pink-500",
-  "Research Impact": "from-teal-400 to-cyber-cyan",
+  "AI/ML Fit": "bg-[#60a5fa]",
+  "Systems Depth": "bg-[#34d399]",
+  "Product Polish": "bg-[#f472b6]",
+  "Research Impact": "bg-[#22d3ee]",
 };
 
 function ScoreBar({
@@ -23,7 +23,7 @@ function ScoreBar({
   value: number;
   delay: number;
 }) {
-  const gradient = dimColors[label] ?? "from-cyber-cyan to-cyber-purple";
+  const colorClass = dimColors[label] ?? "bg-[#7dd3fc]";
   return (
     <div className="flex items-center gap-3">
       <span className="text-xs text-white/35 font-mono w-28 text-right shrink-0">
@@ -31,7 +31,7 @@ function ScoreBar({
       </span>
       <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
         <motion.div
-          className={`h-full bg-gradient-to-r ${gradient} rounded-full`}
+          className={`h-full ${colorClass} rounded-full`}
           initial={{ width: 0 }}
           whileInView={{ width: `${value * 100}%` }}
           viewport={defaultViewport}
@@ -54,7 +54,7 @@ function RankingRow({
 }) {
   return (
     <motion.div
-      className="p-5 rounded-xl border border-white/6 bg-white/2 hover:border-cyber-cyan/20 transition-colors"
+      className="p-5 rounded-xl border border-white/6 bg-white/2 hover:border-white/16 transition-colors"
       initial={{ opacity: 0, x: -20 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={defaultViewport}
@@ -70,7 +70,7 @@ function RankingRow({
         <div className="flex items-center gap-2">
           <span className="text-xs text-white/30 font-mono">p =</span>
           <motion.span
-            className="font-mono text-sm font-bold text-cyber-cyan"
+            className="font-mono text-sm font-bold text-[#7dd3fc]"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={defaultViewport}
@@ -84,7 +84,7 @@ function RankingRow({
       {/* Overall bar */}
       <div className="mb-4 h-1.5 bg-white/5 rounded-full overflow-hidden">
         <motion.div
-          className="h-full bg-gradient-to-r from-cyber-cyan via-glow-blue to-cyber-purple rounded-full"
+          className="h-full bg-[#7dd3fc] rounded-full"
           initial={{ width: 0 }}
           whileInView={{ width: `${item.overallScore * 100}%` }}
           viewport={defaultViewport}
@@ -129,17 +129,6 @@ function SoftmaxRanking() {
           softmax(scores) → probability distribution over projects
         </p>
       </motion.div>
-
-      {/* Disclaimer */}
-      <motion.p
-        className="font-mono text-xs text-white/20 italic mb-12 text-center max-w-sm"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={defaultViewport}
-        transition={{ delay: 0.2 }}
-      >
-        * scores are a portfolio metaphor, not a real ML model
-      </motion.p>
 
       {/* Rankings */}
       <div className="w-full max-w-2xl space-y-4">

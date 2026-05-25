@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { siteConfig } from "@/data/site";
 import { defaultViewport, staggerContainer } from "@/lib/animation";
 
+const stageViewport = { once: false, amount: 0.55, margin: "-5% 0px -5% 0px" } as const;
+
 // Each token gets a deterministic but "realistic-looking" embedding vector
 // Values are seeded per token so they look like real BERT floats
 const TOKEN_VECTORS: Record<string, number[]> = {
@@ -39,25 +41,32 @@ function TokenEmbedCard({
   vector,
   index,
   revealed,
+  replayKey,
 }: {
   label: string;
   vector: number[];
   index: number;
   revealed: boolean;
+  replayKey: number;
 }) {
   const [showNums, setShowNums] = useState(false);
 
   useEffect(() => {
-    if (!revealed) return;
+    if (!revealed) {
+      setShowNums(false);
+      return;
+    }
+
+    setShowNums(false);
     const t = setTimeout(() => setShowNums(true), index * 120 + 300);
     return () => clearTimeout(t);
-  }, [revealed, index]);
+  }, [revealed, index, replayKey]);
 
   return (
     <motion.div
       className="rounded-lg border border-white/8 bg-white/[0.02] overflow-hidden"
       initial={{ opacity: 0, y: 18 }}
-      animate={revealed ? { opacity: 1, y: 0 } : {}}
+      animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
       transition={{ delay: index * 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Token label bar */}
@@ -82,7 +91,7 @@ function TokenEmbedCard({
                   : `rgba(139,92,246,${heatOpacity(v)})`,
               }}
               initial={{ scaleY: 0, originY: 1 }}
-              animate={showNums ? { scaleY: 1 } : {}}
+              animate={showNums ? { scaleY: 1 } : { scaleY: 0 }}
               transition={{ delay: i * 0.04, duration: 0.3, ease: "easeOut" }}
             />
           ))}
@@ -124,23 +133,28 @@ const skillColors: Record<string, string> = {
 
 function EmbeddingLayer() {
   const [revealed, setRevealed] = useState(false);
+  const [replayKey, setReplayKey] = useState(0);
 
   const tokens = siteConfig.tokens;
 
   return (
-    <section
+    <motion.section
       id="embedding"
-      className="relative min-h-screen px-6 flex flex-col items-center justify-center pt-24 pb-16"
+      className="relative min-h-screen px-6 flex flex-col items-center justify-center pt-24 pb-16 overflow-hidden"
       aria-label="Embedding layer"
+      onViewportEnter={() => {
+        setReplayKey((value) => value + 1);
+        setRevealed(true);
+      }}
+      onViewportLeave={() => setRevealed(false)}
+      viewport={stageViewport}
     >
       {/* Stage header */}
       <motion.div
         className="text-center mb-16"
         initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={defaultViewport}
+        animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
-        onViewportEnter={() => setRevealed(true)}
       >
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
           Token → Embedding Vector
@@ -156,7 +170,7 @@ function EmbeddingLayer() {
         <motion.div
           className="flex flex-col items-center gap-3"
           initial={{ opacity: 0 }}
-          animate={revealed ? { opacity: 1 } : {}}
+          animate={revealed ? { opacity: 1 } : { opacity: 0 }}
           transition={{ delay: 0.1 }}
         >
           <div className="px-5 py-2.5 rounded-lg border border-cyber-cyan/20 bg-cyber-cyan/5 font-mono text-sm text-cyber-cyan/70 flex items-center gap-3">
@@ -181,7 +195,7 @@ function EmbeddingLayer() {
           <motion.p
             className="font-mono text-xs text-white/20 uppercase tracking-widest mb-5 text-center"
             initial={{ opacity: 0 }}
-            animate={revealed ? { opacity: 1 } : {}}
+            animate={revealed ? { opacity: 1 } : { opacity: 0 }}
             transition={{ delay: 0.2 }}
           >
             Output — one 768-dim vector per token
@@ -195,6 +209,7 @@ function EmbeddingLayer() {
                 vector={TOKEN_VECTORS[token.label] ?? Array(DIMS).fill(0)}
                 index={i}
                 revealed={revealed}
+                replayKey={replayKey}
               />
             ))}
           </div>
@@ -203,7 +218,7 @@ function EmbeddingLayer() {
           <motion.p
             className="font-mono text-xs text-white/15 text-center mt-5"
             initial={{ opacity: 0 }}
-            animate={revealed ? { opacity: 1 } : {}}
+            animate={revealed ? { opacity: 1 } : { opacity: 0 }}
             transition={{ delay: tokens.length * 0.1 + 0.6 }}
           >
             output_shape = [{tokens.length}, 768] &nbsp;·&nbsp; dtype=float32
@@ -215,8 +230,8 @@ function EmbeddingLayer() {
           <motion.p
             className="font-mono text-xs text-white/20 uppercase tracking-widest mb-5 text-center"
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={defaultViewport}
+            animate={revealed ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ delay: 0.25 }}
           >
             Technical Skills
           </motion.p>
@@ -224,8 +239,7 @@ function EmbeddingLayer() {
             className="flex flex-wrap justify-center gap-2"
             variants={staggerContainer}
             initial="hidden"
-            whileInView="visible"
-            viewport={defaultViewport}
+            animate={revealed ? "visible" : "hidden"}
           >
             {siteConfig.skills.map((skill, i) => (
               <motion.span
@@ -243,7 +257,7 @@ function EmbeddingLayer() {
           </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

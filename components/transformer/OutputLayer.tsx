@@ -41,7 +41,7 @@ function OutputLayer() {
     <section
       id="output"
       className="relative min-h-screen px-6 flex flex-col items-center justify-center text-center overflow-hidden"
-      aria-label="Final output"
+      aria-label="Generated output"
     >
       {/* Glow radial */}
       <div
