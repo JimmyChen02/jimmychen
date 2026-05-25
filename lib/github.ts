@@ -11,6 +11,9 @@ export interface GitHubRepo {
   id: number;
   name: string;
   full_name: string;
+  owner: {
+    login: string;
+  };
   description: string | null;
   html_url: string;
   homepage: string | null;
@@ -19,6 +22,7 @@ export interface GitHubRepo {
   stargazers_count: number;
   forks_count: number;
   updated_at: string;
+  pushed_at: string;
   fork: boolean;
   private: boolean;
 }
@@ -48,20 +52,85 @@ interface PinnedItemsResponse {
   data?: {
     user?: {
       pinnedItems?: {
-        nodes?: Array<{ name?: string | null } | null>;
+        nodes?: Array<PinnedRepoNode | null>;
       };
     };
   };
 }
 
-async function fetchPinnedRepoNames(): Promise<string[]> {
+interface PinnedRepoNode {
+  databaseId?: number | null;
+  name?: string | null;
+  nameWithOwner?: string | null;
+  description?: string | null;
+  url?: string | null;
+  homepageUrl?: string | null;
+  repositoryTopics?: {
+    nodes?: Array<{
+      topic?: {
+        name?: string | null;
+      } | null;
+    } | null>;
+  } | null;
+  primaryLanguage?: {
+    name?: string | null;
+  } | null;
+  stargazerCount?: number | null;
+  forkCount?: number | null;
+  updatedAt?: string | null;
+  pushedAt?: string | null;
+  isFork?: boolean | null;
+  isPrivate?: boolean | null;
+  owner?: {
+    login?: string | null;
+  } | null;
+}
+
+function getPinnedFallbackNames(): string[] {
+  return projectOverrides
+    .filter((override) => override.featured)
+    .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+    .map((override) => override.slug);
+}
+
+function mapPinnedRepo(node: PinnedRepoNode | null | undefined): GitHubRepo | null {
+  const name = node?.name?.trim();
+  const fullName = node?.nameWithOwner?.trim();
+  const ownerLogin = node?.owner?.login?.trim() ?? fullName?.split("/")[0];
+  const htmlUrl = node?.url?.trim();
+
+  if (!name || !fullName || !ownerLogin || !htmlUrl) {
+    return null;
+  }
+
+  const topics = (node?.repositoryTopics?.nodes ?? [])
+    .map((topicNode) => topicNode?.topic?.name?.trim())
+    .filter((topic): topic is string => Boolean(topic));
+
+  return {
+    id: node?.databaseId ?? 0,
+    name,
+    full_name: fullName,
+    owner: { login: ownerLogin },
+    description: node?.description ?? null,
+    html_url: htmlUrl,
+    homepage: node?.homepageUrl ?? null,
+    topics,
+    language: node?.primaryLanguage?.name ?? null,
+    stargazers_count: node?.stargazerCount ?? 0,
+    forks_count: node?.forkCount ?? 0,
+    updated_at: node?.updatedAt ?? node?.pushedAt ?? "",
+    pushed_at: node?.pushedAt ?? node?.updatedAt ?? "",
+    fork: Boolean(node?.isFork),
+    private: Boolean(node?.isPrivate),
+  };
+}
+
+async function fetchPinnedRepos(): Promise<GitHubRepo[]> {
   const token = process.env.GITHUB_TOKEN;
 
   if (!token) {
-    return projectOverrides
-      .filter((override) => override.featured)
-      .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
-      .map((override) => override.slug);
+    return [];
   }
 
   try {
@@ -78,7 +147,31 @@ async function fetchPinnedRepoNames(): Promise<string[]> {
               pinnedItems(first: 6, types: REPOSITORY) {
                 nodes {
                   ... on Repository {
+                    databaseId
                     name
+                    nameWithOwner
+                    description
+                    url
+                    homepageUrl
+                    stargazerCount
+                    forkCount
+                    updatedAt
+                    pushedAt
+                    isFork
+                    isPrivate
+                    owner {
+                      login
+                    }
+                    primaryLanguage {
+                      name
+                    }
+                    repositoryTopics(first: 10) {
+                      nodes {
+                        topic {
+                          name
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -97,8 +190,8 @@ async function fetchPinnedRepoNames(): Promise<string[]> {
 
     const payload: PinnedItemsResponse = await res.json();
     return (payload.data?.user?.pinnedItems?.nodes ?? [])
-      .map((node) => node?.name?.trim())
-      .filter((name): name is string => Boolean(name));
+      .map((node) => mapPinnedRepo(node))
+      .filter((repo): repo is GitHubRepo => Boolean(repo));
   } catch (error) {
     console.error("Failed to fetch pinned GitHub repos:", error);
     return [];
@@ -120,18 +213,49 @@ function orderReposByPinned(repos: GitHubRepo[], pinnedRepoNames: string[]): Git
   return [...pinned, ...remaining];
 }
 
+function mergePinnedAndOwnedRepos(
+  ownedRepos: GitHubRepo[],
+  pinnedRepos: GitHubRepo[],
+  pinnedFallbackNames: string[],
+): GitHubRepo[] {
+  if (pinnedRepos.length === 0) {
+    return orderReposByPinned(ownedRepos, pinnedFallbackNames);
+  }
+
+  const ownedRepoMap = new Map(ownedRepos.map((repo) => [repo.full_name, repo]));
+  const orderedRepos: GitHubRepo[] = [];
+  const seen = new Set<string>();
+
+  for (const pinnedRepo of pinnedRepos) {
+    if (pinnedRepo.fork || pinnedRepo.private) continue;
+
+    const resolvedRepo = ownedRepoMap.get(pinnedRepo.full_name) ?? pinnedRepo;
+    if (seen.has(resolvedRepo.full_name)) continue;
+
+    orderedRepos.push(resolvedRepo);
+    seen.add(resolvedRepo.full_name);
+  }
+
+  for (const repo of ownedRepos) {
+    if (seen.has(repo.full_name)) continue;
+    orderedRepos.push(repo);
+  }
+
+  return orderedRepos;
+}
+
 /**
  * Fetch all public repos for the configured user.
  * Results are cached by Next.js for 1 hour (revalidate: 3600).
  */
 export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
   try {
-    const [res, pinnedRepoNames] = await Promise.all([
+    const [res, pinnedRepos] = await Promise.all([
       fetch(`${GITHUB_API}/users/${USERNAME}/repos?sort=updated&per_page=100&type=public`, {
         headers: getHeaders(),
         next: { revalidate: 3600 }, // ISR: re-fetch every hour
       }),
-      fetchPinnedRepoNames(),
+      fetchPinnedRepos(),
     ]);
 
     if (!res.ok) {
@@ -140,10 +264,12 @@ export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
     }
 
     const repos: GitHubRepo[] = await res.json();
-    // Filter out forks so only original work shows
-    return orderReposByPinned(
-      repos.filter((r) => !r.fork),
-      pinnedRepoNames,
+    const publicOwnedRepos = repos.filter((repo) => !repo.fork);
+
+    return mergePinnedAndOwnedRepos(
+      publicOwnedRepos,
+      pinnedRepos,
+      getPinnedFallbackNames(),
     );
   } catch (error) {
     console.error("Failed to fetch GitHub repos:", error);
@@ -155,10 +281,15 @@ export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
  * Fetch language breakdown for a single repo.
  * Used to enrich project cards with actual byte counts.
  */
-export async function fetchRepoLanguages(repoName: string): Promise<GitHubLanguages> {
+export async function fetchRepoLanguages(repoFullName: string): Promise<GitHubLanguages> {
+  const [owner, repoName] = repoFullName.split("/");
+  if (!owner || !repoName) {
+    return {};
+  }
+
   try {
     const res = await fetch(
-      `${GITHUB_API}/repos/${USERNAME}/${repoName}/languages`,
+      `${GITHUB_API}/repos/${owner}/${repoName}/languages`,
       {
         headers: getHeaders(),
         next: { revalidate: 3600 },
@@ -180,7 +311,7 @@ export async function fetchEnrichedRepos(): Promise<EnrichedRepo[]> {
 
   const enriched = await Promise.all(
     repos.map(async (repo) => {
-      const languages = await fetchRepoLanguages(repo.name);
+      const languages = await fetchRepoLanguages(repo.full_name);
       return { ...repo, languages };
     })
   );

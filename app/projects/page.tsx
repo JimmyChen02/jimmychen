@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { fetchEnrichedRepos } from "@/lib/github";
 import { mergeProjects } from "@/lib/projects";
-import { projectOverrides } from "@/data/project-overrides";
 import { siteConfig } from "@/data/site";
 import ProjectsGrid from "@/components/projects/ProjectsGrid";
 
@@ -13,32 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default async function ProjectsPage() {
-  let projects = mergeProjects([]);
-
-  try {
-    const repos = await fetchEnrichedRepos();
-    projects = mergeProjects(repos);
-  } catch {
-    projects = projectOverrides
-      .filter((o) => !o.hidden)
-      .map((o) => ({
-        title: o.title ?? o.slug,
-        slug: o.slug,
-        description: o.description ?? "",
-        tags: o.tags ?? [],
-        githubUrl: `https://github.com/JimmyChen02/${o.slug}`,
-        demoUrl: o.demoUrl ?? null,
-        language: null,
-        languages: {},
-        stars: 0,
-        forks: 0,
-        updatedAt: new Date().toISOString(),
-        featured: o.featured ?? false,
-        order: o.order ?? 999,
-        scores: o.scores,
-      }))
-      .sort((a, b) => a.order - b.order);
-  }
+  const repos = await fetchEnrichedRepos();
+  const projects = mergeProjects(repos);
 
   return (
     <main className="min-h-screen pt-24 pb-16 sm:pb-24 px-6">

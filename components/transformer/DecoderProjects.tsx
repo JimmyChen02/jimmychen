@@ -13,6 +13,7 @@ interface DecoderProjectsProps {
 }
 
 const SCORE_DIMS = ["AI/ML Fit", "Systems Depth", "Product Polish", "Research Impact"] as const;
+const DECODER_PROJECT_COUNT = 5;
 
 const DIM_COLOR: Record<string, string> = {
   "AI/ML Fit":       "bg-knicks-orange",
@@ -32,6 +33,8 @@ function ProjectCard({
   scores: Record<string, number>;
   overallScore: number;
 }) {
+  const updatedLabel = formatUpdatedAt(project.updatedAt);
+
   return (
     <motion.article
       className="relative p-5 rounded-xl border border-white/8 bg-white/[0.02] backdrop-blur-sm hover:border-knicks-orange/60 hover:bg-knicks-orange/5 transition-all duration-300 group flex flex-col h-full"
@@ -123,16 +126,18 @@ function ProjectCard({
           </span>
         ))}
       </div>
-      <div className="flex items-center gap-1 text-[10px] text-white/20 font-mono">
-        <Clock size={10} />
-        {formatUpdatedAt(project.updatedAt)}
-      </div>
+      {updatedLabel && (
+        <div className="flex items-center gap-1 text-[10px] text-white/20 font-mono">
+          <Clock size={10} />
+          {updatedLabel}
+        </div>
+      )}
     </motion.article>
   );
 }
 
 function DecoderProjects({ projects }: DecoderProjectsProps) {
-  const featured = projects.filter((p) => p.featured);
+  const featured = projects.slice(0, DECODER_PROJECT_COUNT);
   const scoreMap = Object.fromEntries(softmaxRanking.map((r) => [r.slug, r]));
 
   return (
