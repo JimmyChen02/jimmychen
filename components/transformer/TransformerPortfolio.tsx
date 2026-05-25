@@ -3,7 +3,6 @@
 import { memo, Suspense } from "react";
 import dynamic from "next/dynamic";
 import type { Project } from "@/lib/projects";
-import { useScrollify } from "@/hooks/useScrollify";
 
 // Heavy visual components — lazy-loaded
 const NeuralBackground = dynamic(
@@ -37,8 +36,6 @@ interface TransformerPortfolioProps {
  *  - <main>            — all 9 stage sections stacked
  */
 function TransformerPortfolio({ projects }: TransformerPortfolioProps) {
-  useScrollify();
-
   return (
     <div className="relative">
       <NeuralBackground />

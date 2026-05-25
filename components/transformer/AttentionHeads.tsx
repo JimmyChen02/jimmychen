@@ -6,33 +6,35 @@ import { siteConfig } from "@/data/site";
 import { defaultViewport, fadeUpVariants, staggerContainer } from "@/lib/animation";
 
 const headColors: Record<string, { border: string; bg: string; text: string; dot: string; line: string }> = {
+  // Knicks orange heads
   teal: {
-    border: "border-teal-400/40",
-    bg: "bg-teal-400/5 hover:bg-teal-400/10",
-    text: "text-teal-400",
-    dot: "bg-teal-400",
-    line: "rgba(20,184,166,0.4)",
-  },
-  purple: {
-    border: "border-cyber-purple/40",
-    bg: "bg-cyber-purple/5 hover:bg-cyber-purple/10",
-    text: "text-cyber-purple",
-    dot: "bg-cyber-purple",
-    line: "rgba(139,92,246,0.4)",
-  },
-  blue: {
-    border: "border-sky-400/40",
-    bg: "bg-sky-400/5 hover:bg-sky-400/10",
-    text: "text-sky-400",
-    dot: "bg-sky-400",
-    line: "rgba(56,189,248,0.4)",
+    border: "border-knicks-orange/40",
+    bg: "bg-knicks-orange/5 hover:bg-knicks-orange/10",
+    text: "text-knicks-orange",
+    dot: "bg-knicks-orange",
+    line: "rgba(245,132,38,0.5)",
   },
   cyan: {
-    border: "border-cyber-cyan/40",
-    bg: "bg-cyber-cyan/5 hover:bg-cyber-cyan/10",
-    text: "text-cyber-cyan",
-    dot: "bg-cyber-cyan",
-    line: "rgba(6,182,212,0.4)",
+    border: "border-knicks-orange/40",
+    bg: "bg-knicks-orange/5 hover:bg-knicks-orange/10",
+    text: "text-knicks-orange",
+    dot: "bg-knicks-orange",
+    line: "rgba(245,132,38,0.5)",
+  },
+  // Knicks blue heads
+  purple: {
+    border: "border-knicks-blue/40",
+    bg: "bg-knicks-blue/5 hover:bg-knicks-blue/10",
+    text: "text-knicks-blue",
+    dot: "bg-knicks-blue",
+    line: "rgba(0,107,182,0.5)",
+  },
+  blue: {
+    border: "border-knicks-blue/40",
+    bg: "bg-knicks-blue/5 hover:bg-knicks-blue/10",
+    text: "text-knicks-blue",
+    dot: "bg-knicks-blue",
+    line: "rgba(0,107,182,0.5)",
   },
 };
 

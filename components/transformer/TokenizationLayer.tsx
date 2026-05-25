@@ -10,6 +10,23 @@ const stageViewport = { once: false, amount: 0.55, margin: "-5% 0px -5% 0px" } a
 
 type Phase = "idle" | "scanning" | "cutting" | "tokens";
 
+/** Track scroll direction globally so onViewportEnter/Leave know which way we're moving */
+function useScrollDirection() {
+  const dirRef = useRef<"down" | "up">("down");
+  const lastY  = useRef(0);
+  useEffect(() => {
+    lastY.current = window.scrollY;
+    function onScroll() {
+      const curr = window.scrollY;
+      dirRef.current = curr >= lastY.current ? "down" : "up";
+      lastY.current = curr;
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return dirRef;
+}
+
 // ─────────────────────────────────────────────────────────
 // Scissor cut marker that appears between words
 // ─────────────────────────────────────────────────────────
@@ -161,6 +178,7 @@ function TokenizationLayer() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [inView, setInView] = useState(false);
   const timersRef = useRef<number[]>([]);
+  const scrollDir = useScrollDirection();
 
   function clearTimers() {
     timersRef.current.forEach((timer) => window.clearTimeout(timer));
@@ -177,8 +195,30 @@ function TokenizationLayer() {
     setPhase("scanning");
     timersRef.current = [
       window.setTimeout(() => setPhase("cutting"), 2000),
-      window.setTimeout(() => setPhase("tokens"), 4200),
+      window.setTimeout(() => setPhase("tokens"),  4200),
     ];
+  }
+
+  function handleViewportEnter() {
+    setInView(true);
+    if (scrollDir.current === "down") {
+      // Entering from above — run the full animation
+      resetAnimation();
+      startAnimation();
+    } else {
+      // Entering from below (scrolling up) — jump straight to finished state
+      clearTimers();
+      setPhase("tokens");
+    }
+  }
+
+  function handleViewportLeave() {
+    setInView(false);
+    if (scrollDir.current === "up") {
+      // Leaving upward (back to hero) — reset so next entry replays
+      resetAnimation();
+    }
+    // Leaving downward — keep tokens visible, don't reset
   }
 
   useEffect(() => resetAnimation, []);
@@ -191,14 +231,8 @@ function TokenizationLayer() {
       id="tokenization"
       className="relative min-h-[82svh] lg:min-h-[84svh] px-6 pt-20 pb-8 lg:pt-24 lg:pb-10 flex flex-col items-center justify-center"
       aria-label="Tokenization layer"
-      onViewportEnter={() => {
-        setInView(true);
-        startAnimation();
-      }}
-      onViewportLeave={() => {
-        setInView(false);
-        resetAnimation();
-      }}
+      onViewportEnter={handleViewportEnter}
+      onViewportLeave={handleViewportLeave}
       viewport={stageViewport}
     >
       {/* Outer layout wrapper — shifts upward smoothly as content grows */}

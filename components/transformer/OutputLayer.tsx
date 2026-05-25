@@ -13,8 +13,12 @@ function useTypingAnimation(text: string, triggered: boolean) {
   const [displayed, setDisplayed] = useState("");
 
   useEffect(() => {
-    if (!triggered) return;
+    if (!triggered) {
+      setDisplayed(""); // reset on leave so next entry starts fresh
+      return;
+    }
     let i = 0;
+    setDisplayed("");
     const timer = setInterval(() => {
       i++;
       setDisplayed(text.slice(0, i));
@@ -53,13 +57,14 @@ function OutputLayer() {
         aria-hidden="true"
       />
 
-      {/* Viewport trigger — invisible, just fires setInView */}
+      {/* Viewport trigger — invisible, fires setInView on enter AND leave */}
       <motion.div
         className="mb-12"
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
         onViewportEnter={() => setInView(true)}
-        viewport={defaultViewport}
+        onViewportLeave={() => setInView(false)}
+        viewport={{ once: false, amount: 0.3 }}
       />
 
       {/* Inference complete indicator */}

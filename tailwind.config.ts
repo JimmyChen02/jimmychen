@@ -22,6 +22,9 @@ const config: Config = {
         "glow-blue": "#38bdf8",
         "glow-cyan": "#67e8f9",
         "glow-purple": "#a78bfa",
+        // Knicks accent (used only in Encoder + Attention + project bars)
+        "knicks-orange": "#F58426",
+        "knicks-blue": "#006BB6",
         // Neutrals
         "panel-bg": "rgba(10, 20, 40, 0.7)",
         "panel-border": "rgba(6, 182, 212, 0.2)",

@@ -17,17 +17,11 @@ import { useEffect, useRef } from "react";
 const SECTION_IDS = [
   "hero",
   "tokenization",
-  "embedding",
-  "encoder",
-  "attention",
-  "feedforward",
-  "decoder",
-  "output",
 ] as const;
 
 const LAST_IDX    = SECTION_IDS.length - 1;
-const COOLDOWN_MS = 950;   // ms — matches smooth-scroll settle time
-const MIN_DELTA   = 8;     // ignore micro-scrolls but catch real intent
+const COOLDOWN_MS = 800;   // ms — short snap distance needs shorter cooldown
+const MIN_DELTA   = 25;    // require intentional scroll gesture
 const MIN_SWIPE   = 50;    // px — minimum touch swipe distance
 const EDGE_PX     = 48;    // px — boundary tolerance for tall sections
 
@@ -61,11 +55,11 @@ function computeActiveIndex(): number {
 
 export function useScrollify() {
   const cooldown    = useRef(false);
-  const idxRef      = useRef(0);          // tracked section index
+  const idxRef      = useRef(0);
   const touchStartY = useRef(0);
 
   useEffect(() => {
-    // Sync idxRef on scroll — but never during a snap animation or it corrupts the index
+    // Sync idxRef on scroll — never during a snap or it corrupts the index
     function syncIdx() {
       if (cooldown.current) return;
       idxRef.current = computeActiveIndex();
@@ -73,8 +67,9 @@ export function useScrollify() {
     window.addEventListener("scroll", syncIdx, { passive: true });
 
     // ── Shared snap logic ──────────────────────────────────
+    // Scrollify only active while tokenization is still in or above viewport
     function isPastPipeline(): boolean {
-      const el = document.getElementById("output");
+      const el = document.getElementById("tokenization");
       if (!el) return false;
       return el.getBoundingClientRect().bottom < 0;
     }
@@ -82,22 +77,6 @@ export function useScrollify() {
     function trySnap(delta: number) {
       if (cooldown.current) return;
       if (isPastPipeline()) return;
-
-      // Re-entering the pipeline from below (scrolling up from portfolio):
-      // output section is partially above viewport → snap to it first
-      if (delta < 0) {
-        const outputEl = document.getElementById("output");
-        if (outputEl) {
-          const r = outputEl.getBoundingClientRect();
-          if (r.top < 0 && r.bottom >= 0) {
-            cooldown.current = true;
-            idxRef.current = LAST_IDX;
-            scrollToSection(LAST_IDX);
-            setTimeout(() => { cooldown.current = false; }, COOLDOWN_MS);
-            return;
-          }
-        }
-      }
 
       syncIdx();
       const idx = idxRef.current;
@@ -132,7 +111,7 @@ export function useScrollify() {
     function onWheel(e: WheelEvent) {
       if (Math.abs(e.deltaY) < MIN_DELTA) return;
       if (isPastPipeline()) return;
-      if (cooldown.current) { e.preventDefault(); return; } // block native scroll during snap
+      if (cooldown.current) { e.preventDefault(); return; }
 
       syncIdx();
       const idx = idxRef.current;
@@ -147,7 +126,7 @@ export function useScrollify() {
         if (!atBottom && !atTop) return; // don't intercept
       }
 
-      if (idx === LAST_IDX && e.deltaY > 0) return; // release at end
+      if (idx === LAST_IDX && e.deltaY > 0) return; // release once past tokenization
 
       e.preventDefault();
       trySnap(e.deltaY);

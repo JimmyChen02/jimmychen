@@ -15,10 +15,10 @@ interface DecoderProjectsProps {
 const SCORE_DIMS = ["AI/ML Fit", "Systems Depth", "Product Polish", "Research Impact"] as const;
 
 const DIM_COLOR: Record<string, string> = {
-  "AI/ML Fit":       "from-cyber-cyan to-cyber-purple",
-  "Systems Depth":   "from-sky-400 to-cyber-cyan",
-  "Product Polish":  "from-cyber-purple to-pink-500",
-  "Research Impact": "from-teal-400 to-cyber-cyan",
+  "AI/ML Fit":       "bg-knicks-orange",
+  "Systems Depth":   "bg-knicks-blue",
+  "Product Polish":  "bg-knicks-orange",
+  "Research Impact": "bg-knicks-blue",
 };
 
 function ProjectCard({
@@ -34,7 +34,7 @@ function ProjectCard({
 }) {
   return (
     <motion.article
-      className="relative p-5 rounded-xl border border-white/8 bg-white/[0.02] backdrop-blur-sm hover:border-cyber-cyan/25 transition-all duration-300 group flex flex-col h-full"
+      className="relative p-5 rounded-xl border border-white/8 bg-white/[0.02] backdrop-blur-sm hover:border-knicks-orange/60 hover:bg-knicks-orange/5 transition-all duration-300 group flex flex-col h-full"
       initial={{ opacity: 0, y: 32, scale: 0.97 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={defaultViewport}
@@ -76,7 +76,7 @@ function ProjectCard({
       {/* Overall probability bar */}
       <div className="mb-4 h-1 bg-white/5 rounded-full overflow-hidden">
         <motion.div
-          className="h-full bg-gradient-to-r from-cyber-cyan via-glow-blue to-cyber-purple rounded-full"
+          className="h-full bg-knicks-orange rounded-full"
           initial={{ width: 0 }}
           whileInView={{ width: `${overallScore * 100}%` }}
           viewport={defaultViewport}
@@ -101,7 +101,7 @@ function ProjectCard({
             <span className="font-mono text-[10px] text-white/25 w-24 text-right shrink-0">{dim}</span>
             <div className="flex-1 h-0.5 bg-white/5 rounded-full overflow-hidden">
               <motion.div
-                className={`h-full bg-gradient-to-r ${DIM_COLOR[dim]} rounded-full`}
+                className={`h-full ${DIM_COLOR[dim]} rounded-full`}
                 initial={{ width: 0 }}
                 whileInView={{ width: `${(scores[dim] ?? 0) * 100}%` }}
                 viewport={defaultViewport}
@@ -173,15 +173,6 @@ function DecoderProjects({ projects }: DecoderProjectsProps) {
         })}
       </div>
 
-      <motion.p
-        className="mt-10 font-mono text-xs text-white/15 text-center"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={defaultViewport}
-        transition={{ delay: 0.6 }}
-      >
-        [EOS] · scores are a portfolio metaphor, not a real ML model
-      </motion.p>
     </section>
   );
 }
