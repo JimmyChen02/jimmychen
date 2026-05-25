@@ -21,7 +21,7 @@ export default async function ProjectsPage() {
         {/* Header */}
         <div className="mb-14">
           <a
-            href="/"
+            href="/#projects"
             className="font-mono text-xs text-white/30 hover:text-white/60 transition-colors mb-4 inline-block"
           >
             ← Back home
