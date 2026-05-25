@@ -29,8 +29,8 @@ export interface Project {
   stars: number;
   /** Fork count */
   forks: number;
-  /** ISO date string of last push */
-  updatedAt: string;
+  /** ISO date string of the last code push, if known */
+  updatedAt: string | null;
   /** Whether this should appear in the featured section */
   featured: boolean;
   /** Display order (lower = first) */
@@ -52,7 +52,7 @@ function projectFromOverride(override: ProjectOverride): Project {
     languages: {},
     stars: 0,
     forks: 0,
-    updatedAt: new Date().toISOString(),
+    updatedAt: null,
     featured: override.featured ?? false,
     order: override.order ?? 999,
     scores: override.scores,
@@ -76,7 +76,7 @@ function mergeProject(repo: EnrichedRepo, override: ProjectOverride | undefined)
     languages: repo.languages,
     stars: repo.stargazers_count,
     forks: repo.forks_count,
-    updatedAt: repo.updated_at,
+    updatedAt: repo.pushed_at || repo.updated_at || null,
     featured: override?.featured ?? false,
     order: override?.order ?? 999,
     scores: override?.scores,
@@ -120,13 +120,18 @@ export function getFeaturedProjects(projects: Project[]): Project[] {
 }
 
 /** Format a date string as "Jan 2024" for display. */
-export function formatUpdatedAt(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    });
-  } catch {
+export function formatUpdatedAt(iso?: string | null): string {
+  if (!iso) {
     return "";
   }
+
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
 }

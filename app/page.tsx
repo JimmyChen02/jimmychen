@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { fetchEnrichedRepos } from "@/lib/github";
 import { mergeProjects } from "@/lib/projects";
-import { projectOverrides } from "@/data/project-overrides";
 import TransformerPortfolio from "@/components/transformer/TransformerPortfolio";
 import ProjectsGrid from "@/components/projects/ProjectsGrid";
 import AboutSection from "@/components/sections/AboutSection";
@@ -12,35 +11,8 @@ import ContactSection from "@/components/sections/ContactSection";
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  // Fetch GitHub data server-side — token never exposed to client
-  let projects = mergeProjects([]);
-
-  try {
-    const repos = await fetchEnrichedRepos();
-    projects = mergeProjects(repos);
-  } catch {
-    // Fallback: build projects from local overrides only
-    // (this handles GitHub being down or rate-limited at build time)
-    projects = projectOverrides
-      .filter((o) => !o.hidden)
-      .map((o) => ({
-        title: o.title ?? o.slug,
-        slug: o.slug,
-        description: o.description ?? "",
-        tags: o.tags ?? [],
-        githubUrl: `https://github.com/JimmyChen02/${o.slug}`,
-        demoUrl: o.demoUrl ?? null,
-        language: null,
-        languages: {},
-        stars: 0,
-        forks: 0,
-        updatedAt: new Date().toISOString(),
-        featured: o.featured ?? false,
-        order: o.order ?? 999,
-        scores: o.scores,
-      }))
-      .sort((a, b) => a.order - b.order);
-  }
+  const repos = await fetchEnrichedRepos();
+  const projects = mergeProjects(repos);
 
   return (
     <>

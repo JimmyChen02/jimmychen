@@ -30,6 +30,7 @@ function ProjectCard({ project, className }: ProjectCardProps) {
     .map(([lang]) => lang);
 
   const displayLang = project.language ?? topLangs[0] ?? null;
+  const updatedLabel = formatUpdatedAt(project.updatedAt);
 
   return (
     <article
@@ -114,10 +115,12 @@ function ProjectCard({ project, className }: ProjectCardProps) {
             <span>{project.forks}</span>
           </span>
         )}
-        <span className="flex items-center gap-1 ml-auto">
-          <Clock size={11} aria-hidden="true" />
-          {formatUpdatedAt(project.updatedAt)}
-        </span>
+        {updatedLabel && (
+          <span className="flex items-center gap-1 ml-auto">
+            <Clock size={11} aria-hidden="true" />
+            {updatedLabel}
+          </span>
+        )}
       </div>
     </article>
   );
