@@ -32,10 +32,11 @@
 }
 
 html {
-  /* scrollify hook handles section-to-section navigation via scrollIntoView.
-     Keep smooth for any remaining anchor-link or programmatic scrolls. */
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  /* CSS scroll-snap: only hero + tokenization are snap points;
+     everything below scrolls freely */
+  scroll-snap-type: y mandatory;
 }
 
 body {
@@ -53,8 +54,17 @@ body {
 section {
   will-change: auto;
   transform: translateZ(0);
-  /* Offset scrollIntoView by navbar height (64px) so titles aren't hidden */
   scroll-margin-top: 64px;
+}
+
+/* Snap only on hero and tokenization — everything below scrolls freely */
+#hero {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+#tokenization {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 /* =========================================================
