@@ -1,6 +1,6 @@
 # Jimmy Chen — Transformer Portfolio
 
-A cinematic personal portfolio built with Next.js 15, TypeScript, Tailwind CSS, and Framer Motion.
+My personal portfolio built with Next.js 15, TypeScript, Tailwind CSS, and Framer Motion.
 
 The homepage is structured like a transformer inference pipeline:
 
@@ -9,8 +9,6 @@ The homepage is structured like a transformer inference pipeline:
 - `embedding` → skill vectors
 - `encoder` / `attention` / `feedforward` → context + strengths
 - `decoder` / `softmax` / `output` → featured projects + final summary
-
-Below the scroll narrative, the site falls through into standard portfolio sections for recruiters and quick scanning: About, Projects, Skills, and Contact.
 
 ## Stack
 
@@ -23,16 +21,6 @@ Below the scroll narrative, the site falls through into standard portfolio secti
 | Icons | Lucide React |
 | Data | GitHub REST API + local project overrides |
 | Deploy | Vercel |
-
-## Features
-
-- Scroll-driven transformer story with section snapping on desktop
-- Desktop-only continuous SVG pipe with a looping glow streak
-- Animated neural background and stage-by-stage visual reveals
-- GitHub-backed project grid with local override support
-- Dedicated `/projects` page for the full project list
-- Server-side GitHub fetching with hourly revalidation
-- Resume / GitHub / LinkedIn CTA wiring from a single config file
 
 ## Quick Start
 
@@ -68,10 +56,6 @@ Notes:
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
-
-If `3000` is busy, Next.js will fall back to the next open port.
-
 ## Useful Scripts
 
 ```bash
@@ -94,8 +78,6 @@ This is the primary content/config file for the portfolio. It controls:
 - About section portrait + copy
 - final output CTA buttons
 
-If you want to change the public-facing story of the site, start here.
-
 ### `data/project-overrides.ts`
 
 This file lets you shape how GitHub repos appear in the portfolio:
@@ -106,8 +88,6 @@ This file lets you shape how GitHub repos appear in the portfolio:
 - mark projects as featured
 - add demo URLs
 - define softmax ranking scores
-
-Overrides win over GitHub data when both exist.
 
 ## GitHub Project Sync
 
