@@ -130,7 +130,7 @@ function EmbeddingLayer() {
   return (
     <section
       id="embedding"
-      className="relative py-32 px-6 flex flex-col items-center"
+      className="relative min-h-screen px-6 flex flex-col items-center justify-center pt-24 pb-16"
       aria-label="Embedding layer"
     >
       {/* Stage header */}

@@ -40,7 +40,7 @@ function OutputLayer() {
   return (
     <section
       id="output"
-      className="relative py-40 px-6 flex flex-col items-center text-center overflow-hidden"
+      className="relative min-h-screen px-6 flex flex-col items-center justify-center text-center overflow-hidden"
       aria-label="Final output"
     >
       {/* Glow radial */}
@@ -89,10 +89,10 @@ function OutputLayer() {
         transition={{ delay: 0.3 }}
       >
         <div className="p-6 rounded-2xl border border-cyber-cyan/30 bg-cyber-cyan/5 shadow-glow-lg backdrop-blur-sm">
-          <p className="font-mono text-xs text-white/30 mb-3 text-left">
+          <p className="font-mono text-xs text-white/30 mb-3 text-center">
             output:
           </p>
-          <p className="text-2xl sm:text-3xl font-bold text-white text-left leading-snug min-h-[3em]">
+          <p className="text-2xl sm:text-3xl font-bold text-white text-center leading-snug min-h-[3em]">
             {displayed}
             {displayed.length < OUTPUT_TEXT.length && (
               <motion.span

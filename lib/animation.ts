@@ -170,6 +170,12 @@ export function getReducedMotionVariants<T extends Variants>(
 
 /**
  * Default viewport config for whileInView animations.
- * `once: true` avoids re-triggering on scroll-back which feels janky.
+ * `once: false` so animations replay on every scroll in/out.
  */
-export const defaultViewport = { once: true, margin: "-80px" } as const;
+export const defaultViewport = { once: false, margin: "-60px 0px" } as const;
+
+/**
+ * One-shot viewport config — use for the tokenization section where
+ * the animation should only run once (it has its own phase state machine).
+ */
+export const onceViewport = { once: true, margin: "-60px 0px" } as const;

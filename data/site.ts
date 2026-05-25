@@ -45,28 +45,35 @@ export const siteConfig = {
     { key: "nlp_dim", label: "nlp_dim", value: 0.9 },
   ],
 
-  // Skills list for embedding layer
+  // Skills list for embedding layer + About section badge row
+  // To pull from resume/LinkedIn: update this array, dedup by name, keep the rest the same.
   skills: [
-    { name: "Python", category: "lang" },
-    { name: "Java", category: "lang" },
-    { name: "TypeScript", category: "lang" },
-    { name: "OCaml", category: "lang" },
-    { name: "C", category: "lang" },
-    { name: "React", category: "framework" },
-    { name: "Next.js", category: "framework" },
-    { name: "FastAPI", category: "framework" },
-    { name: "PyTorch", category: "ml" },
-    { name: "SwiftUI", category: "framework" },
-    { name: "PostgreSQL", category: "data" },
-    { name: "SQL", category: "data" },
-    { name: "AWS", category: "infra" },
-    { name: "Docker", category: "infra" },
-    { name: "GitHub Actions", category: "infra" },
+    { name: "Python",         category: "lang"      },
+    { name: "TypeScript",     category: "lang"      },
+    { name: "Java",           category: "lang"      },
+    { name: "OCaml",          category: "lang"      },
+    { name: "C",              category: "lang"      },
+    { name: "PyTorch",        category: "ml"        },
+    { name: "NLP",            category: "ml"        },
+    { name: "LLMs",           category: "ml"        },
+    { name: "React",          category: "framework" },
+    { name: "Next.js",        category: "framework" },
+    { name: "FastAPI",        category: "framework" },
+    { name: "SwiftUI",        category: "framework" },
+    { name: "PostgreSQL",     category: "data"      },
+    { name: "SQL",            category: "data"      },
+    { name: "AWS",            category: "infra"     },
+    { name: "Docker",         category: "infra"     },
+    { name: "GitHub Actions", category: "infra"     },
   ],
 
   // About section
   about: {
     portraitUrl: "https://github.com/JimmyChen02.png?size=600",
+    // ── Skills displayed in the About section ────────────────────────────────
+    // Single source of truth: update this list when pulling from resume/LinkedIn.
+    // Dedup by `name` before rendering. category controls the badge color.
+    // Categories: "lang" | "framework" | "ml" | "data" | "infra" | "other"
     paragraphs: [
       "I'm a Computer Science student at Cornell Engineering, interested in the space where AI systems meet real-world problems.",
       "My work spans NLP, machine learning systems, backend infrastructure, and applied research. I care about building things that are technically rigorous and genuinely useful.",

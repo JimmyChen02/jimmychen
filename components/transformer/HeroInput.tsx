@@ -164,6 +164,7 @@ function HeroInput() {
 
       {/* CTA buttons — always visible after mount */}
       <motion.div
+        data-pipe-cta-row="hero"
         className="flex flex-wrap justify-center gap-3"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}

@@ -4,44 +4,55 @@ import { memo } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteConfig } from "@/data/site";
-import { defaultViewport, fadeUpVariants, slideInLeft, slideInRight } from "@/lib/animation";
-import { Github, Linkedin, Mail, FileText, MapPin, GraduationCap, Cpu } from "lucide-react";
+import {
+  defaultViewport,
+  fadeUpVariants,
+  slideInLeft,
+  slideInRight,
+} from "@/lib/animation";
+import {
+  Github,
+  Linkedin,
+  Mail,
+  FileText,
+  MapPin,
+  GraduationCap,
+  Cpu,
+} from "lucide-react";
 
-const SKILL_TAGS = [
-  { label: "Python",       color: "cyan"   },
-  { label: "TypeScript",   color: "blue"   },
-  { label: "PyTorch",      color: "purple" },
-  { label: "Next.js",      color: "cyan"   },
-  { label: "NLP",          color: "teal"   },
-  { label: "FastAPI",      color: "blue"   },
-  { label: "PostgreSQL",   color: "purple" },
-  { label: "Docker",       color: "cyan"   },
-  { label: "AWS",          color: "teal"   },
-  { label: "LLMs",         color: "purple" },
-];
-
-const colorMap: Record<string, string> = {
-  cyan:   "border-cyan-400/30   bg-cyan-400/8   text-cyan-300",
-  blue:   "border-blue-400/30   bg-blue-400/8   text-blue-300",
-  purple: "border-purple-400/30 bg-purple-400/8 text-purple-300",
-  teal:   "border-teal-400/30   bg-teal-400/8   text-teal-300",
+// ── Skill badge color by category ─────────────────────────────────────────────
+// To update skills: edit siteConfig.skills in data/site.ts.
+// When pulling from resume / LinkedIn, deduplicate by `name` there before
+// writing back to site.ts — this component will update automatically.
+const CATEGORY_COLOR: Record<string, string> = {
+  lang:      "border-blue-400/35   bg-blue-400/8   text-blue-300",
+  ml:        "border-purple-400/35 bg-purple-400/8 text-purple-300",
+  framework: "border-cyan-400/35   bg-cyan-400/8   text-cyan-300",
+  data:      "border-teal-400/35   bg-teal-400/8   text-teal-300",
+  infra:     "border-sky-400/35    bg-sky-400/8    text-sky-300",
+  other:     "border-white/20      bg-white/5      text-white/60",
 };
 
 const statsRows = [
-  { icon: <GraduationCap size={13} />, label: "School",   value: "Cornell Engineering" },
+  { icon: <GraduationCap size={13} />, label: "School",   value: "Cornell Engineering"   },
   { icon: <Cpu           size={13} />, label: "Degree",   value: "B.S. Computer Science" },
   { icon: <Cpu           size={13} />, label: "Focus",    value: "AI / ML · NLP · Systems" },
-  { icon: <MapPin        size={13} />, label: "Location", value: "Ithaca, NY" },
+  { icon: <MapPin        size={13} />, label: "Location", value: "Ithaca, NY"            },
 ];
 
 function AboutSection() {
+  // Deduplicate skills by name (safe guard for future resume/LinkedIn merges)
+  const skills = siteConfig.skills.filter(
+    (s, i, arr) => arr.findIndex((x) => x.name === s.name) === i
+  );
+
   return (
     <section
       id="about"
       className="py-28 px-6 max-w-5xl mx-auto"
       aria-label="About section"
     >
-      {/* ── Header ───────────────────────────────────────── */}
+      {/* ── Header ────────────────────────────────────────────────────────── */}
       <motion.div
         className="mb-16"
         variants={fadeUpVariants}
@@ -55,33 +66,35 @@ function AboutSection() {
         <h2 className="text-3xl sm:text-4xl font-bold text-white">About Me</h2>
       </motion.div>
 
-      {/* ── Two-column layout ────────────────────────────── */}
-      <div className="grid md:grid-cols-5 gap-14 items-start">
+      {/* ── Two-column grid — columns stretch to equal height ─────────────── */}
+      <div className="grid md:grid-cols-5 gap-14 md:items-stretch">
 
-        {/* Left — bio + links + skill tags */}
+        {/* Left — bio + links + skill tags ──────────────────────────────── */}
         <motion.div
-          className="md:col-span-3 space-y-6"
+          className="md:col-span-3 flex flex-col gap-5"
           variants={slideInLeft}
           initial="hidden"
           whileInView="visible"
           viewport={defaultViewport}
         >
-          {siteConfig.about.paragraphs.map((para, i) => (
-            <p key={i} className="text-white/60 leading-relaxed text-[0.95rem]">
-              {para}
-            </p>
-          ))}
+          {/* Bio paragraphs */}
+          <div className="space-y-5">
+            {siteConfig.about.paragraphs.map((para, i) => (
+              <p key={i} className="text-white/60 leading-relaxed text-[0.95rem]">
+                {para}
+              </p>
+            ))}
+          </div>
 
           {/* Social / contact links */}
-          <div className="flex flex-wrap gap-2.5 pt-2">
+          <div className="flex flex-wrap gap-2.5">
             <a
               href={siteConfig.github}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/25 text-sm transition-all"
             >
-              <Github size={14} />
-              GitHub
+              <Github size={14} /> GitHub
             </a>
             <a
               href={siteConfig.linkedin}
@@ -89,15 +102,13 @@ function AboutSection() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/25 text-sm transition-all"
             >
-              <Linkedin size={14} />
-              LinkedIn
+              <Linkedin size={14} /> LinkedIn
             </a>
             <a
               href={`mailto:${siteConfig.email}`}
               className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/25 text-sm transition-all"
             >
-              <Mail size={14} />
-              Email
+              <Mail size={14} /> Email
             </a>
             <a
               href={siteConfig.resumeUrl}
@@ -105,78 +116,87 @@ function AboutSection() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 rounded-lg border border-cyber-cyan/35 bg-cyber-cyan/6 text-cyber-cyan hover:bg-cyber-cyan/12 text-sm transition-all shadow-[0_0_18px_rgba(6,182,212,0.12)]"
             >
-              <FileText size={14} />
-              Resume
+              <FileText size={14} /> Resume
             </a>
           </div>
 
-          {/* Skill tags */}
-          <div className="pt-2">
+          {/* Skill badge row — driven by siteConfig.skills */}
+          <div className="mt-auto pt-2">
             <p className="font-mono text-[10px] text-white/25 uppercase tracking-widest mb-3">
               Skills
             </p>
             <div className="flex flex-wrap gap-2">
-              {SKILL_TAGS.map((tag, i) => (
+              {skills.map((skill, i) => (
                 <motion.span
-                  key={tag.label}
-                  className={`px-2.5 py-1 rounded-md border font-mono text-xs ${colorMap[tag.color]}`}
+                  key={skill.name}
+                  className={`px-2.5 py-1 rounded-md border font-mono text-xs ${
+                    CATEGORY_COLOR[skill.category] ?? CATEGORY_COLOR.other
+                  }`}
                   initial={{ opacity: 0, scale: 0.85 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={defaultViewport}
-                  transition={{ delay: i * 0.04, duration: 0.3, type: "spring", stiffness: 260, damping: 20 }}
+                  transition={{
+                    delay: i * 0.035,
+                    duration: 0.3,
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                  }}
                 >
-                  {tag.label}
+                  {skill.name}
                 </motion.span>
               ))}
             </div>
           </div>
         </motion.div>
 
-        {/* Right — portrait + stats card */}
+        {/* Right — portrait + stats card ────────────────────────────────── */}
         <motion.div
-          className="md:col-span-2 space-y-5"
+          className="md:col-span-2 flex flex-col gap-4"
           variants={slideInRight}
           initial="hidden"
           whileInView="visible"
           viewport={defaultViewport}
         >
-          {/* Portrait */}
-          <div className="relative rounded-2xl overflow-hidden border border-cyber-cyan/15 shadow-[0_0_40px_rgba(6,182,212,0.10)]">
-            {/* Cyan radial glow overlay */}
+          {/* Portrait — flex-1 + min-h-0 so it fills whatever space is left
+              after the stats card, keeping both columns the same height.
+              No fixed aspect ratio; the grid row height drives it.           */}
+          <div className="relative aspect-square rounded-2xl overflow-hidden border border-cyber-cyan/15 shadow-[0_0_40px_rgba(6,182,212,0.10)]">
+            {/* Top cyan radial glow */}
             <div
               className="absolute inset-0 z-10 pointer-events-none"
               style={{
-                background: "radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.15) 0%, transparent 65%)",
+                background:
+                  "radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.14) 0%, transparent 60%)",
               }}
               aria-hidden="true"
             />
-            <div className="relative aspect-[4/5]">
-              <Image
-                src={siteConfig.about.portraitUrl}
-                alt={`${siteConfig.name} portrait`}
-                fill
-                sizes="(min-width: 768px) 28vw, 90vw"
-                className="object-cover object-top"
-                priority
-              />
-            </div>
-            {/* Bottom fade so it blends into the stats card */}
+            <Image
+              src={siteConfig.about.portraitUrl}
+              alt={`${siteConfig.name} portrait`}
+              fill
+              sizes="(min-width: 768px) 28vw, 90vw"
+              className="object-cover object-center"
+              priority
+            />
+            {/* Bottom fade into stats card */}
             <div
-              className="absolute bottom-0 left-0 right-0 h-20 z-10 pointer-events-none"
+              className="absolute bottom-0 left-0 right-0 h-16 z-10 pointer-events-none"
               style={{
-                background: "linear-gradient(to bottom, transparent, rgba(5,10,18,0.85))",
+                background:
+                  "linear-gradient(to bottom, transparent, rgba(5,10,18,0.75))",
               }}
               aria-hidden="true"
             />
           </div>
 
           {/* Stats card */}
-          <div className="rounded-xl border border-white/8 bg-white/[0.025] p-5 space-y-4 backdrop-blur-sm">
-            {/* Availability badge */}
-            <div className="flex items-center gap-2 mb-1">
+          <div className="rounded-xl border border-white/8 bg-white/[0.025] p-5 space-y-4 backdrop-blur-sm shrink-0">
+            {/* Availability pulse */}
+            <div className="flex items-center gap-2">
               <motion.div
                 className="w-2 h-2 rounded-full bg-emerald-400"
-                animate={{ scale: [1, 1.35, 1], opacity: [0.7, 1, 0.7] }}
+                animate={{ scale: [1, 1.4, 1], opacity: [0.7, 1, 0.7] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
               <span className="font-mono text-xs text-emerald-400/80">
@@ -201,7 +221,9 @@ function AboutSection() {
                     {row.label}
                   </span>
                 </div>
-                <span className="text-sm text-white/70 text-right">{row.value}</span>
+                <span className="text-sm text-white/70 text-right">
+                  {row.value}
+                </span>
               </motion.div>
             ))}
           </div>

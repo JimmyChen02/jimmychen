@@ -111,7 +111,7 @@ function SoftmaxRanking() {
   return (
     <section
       id="softmax"
-      className="relative py-32 px-6 flex flex-col items-center"
+      className="relative min-h-screen px-6 flex flex-col items-center justify-center pt-24 pb-16"
       aria-label="Softmax ranking"
     >
       {/* Stage header */}
