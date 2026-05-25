@@ -1,61 +1,66 @@
-# Jimmy Chen — Portfolio
+# Jimmy Chen — Transformer Portfolio
 
-A vertical, scroll-driven Transformer-themed personal portfolio built with Next.js 14, TypeScript, Tailwind CSS, and Framer Motion.
+A cinematic personal portfolio built with Next.js 15, TypeScript, Tailwind CSS, and Framer Motion.
 
-## Live Demo
+The homepage is structured like a transformer inference pipeline:
 
-Deploy your own copy to Vercel in < 5 minutes (see below).
+- `hero` → raw input
+- `tokenization` → identity tokens
+- `embedding` → skill vectors
+- `encoder` / `attention` / `feedforward` → context + strengths
+- `decoder` / `softmax` / `output` → featured projects + final summary
 
----
+Below the scroll narrative, the site falls through into standard portfolio sections for recruiters and quick scanning: About, Projects, Skills, and Contact.
 
-## Tech Stack
+## Stack
 
 | Layer | Choice |
-|---|---|
-| Framework | Next.js 14 (App Router) |
+| --- | --- |
+| Framework | Next.js 15 (App Router) |
 | Language | TypeScript |
-| Styling | Tailwind CSS v3 |
-| Animations | Framer Motion |
-| Background | Canvas API (vanilla, no library) |
-| Data | GitHub REST API v3 + local overrides |
-| Deployment | Vercel (recommended) |
+| Styling | Tailwind CSS |
+| Animation | Framer Motion |
+| Icons | Lucide React |
+| Data | GitHub REST API + local project overrides |
+| Deploy | Vercel |
 
----
+## Features
+
+- Scroll-driven transformer story with section snapping on desktop
+- Desktop-only continuous SVG pipe with a looping glow streak
+- Animated neural background and stage-by-stage visual reveals
+- GitHub-backed project grid with local override support
+- Dedicated `/projects` page for the full project list
+- Server-side GitHub fetching with hourly revalidation
+- Resume / GitHub / LinkedIn CTA wiring from a single config file
 
 ## Quick Start
 
-### 1. Clone and install
+### 1. Install
 
 ```bash
-git clone https://github.com/JimmyChen02/portfolio.git
-cd portfolio
 npm install
 ```
 
-### 2. Set up environment variables
+### 2. Configure environment variables
 
 ```bash
 cp .env.example .env.local
 ```
 
-Edit `.env.local`:
+Then set:
 
 ```env
-# Optional but recommended — raises rate limit from 60 to 5000 req/hr
 GITHUB_TOKEN=ghp_your_token_here
-
-# Must match your GitHub username
 NEXT_PUBLIC_GITHUB_USERNAME=JimmyChen02
-
-# Used for Open Graph metadata
 NEXT_PUBLIC_SITE_URL=https://jimmychen.dev
 ```
 
-**Creating a GitHub token:**
-1. Go to github.com/settings/tokens
-2. Click "Generate new token (classic)"
-3. Select `public_repo` scope (read-only is fine)
-4. Copy the token into `GITHUB_TOKEN`
+Notes:
+
+- `GITHUB_TOKEN` is optional but recommended for higher rate limits.
+- `NEXT_PUBLIC_GITHUB_USERNAME` is used for repo fetching and fallback links.
+- `NEXT_PUBLIC_SITE_URL` is used for metadata and canonical URLs.
 
 ### 3. Run locally
 
@@ -63,181 +68,154 @@ NEXT_PUBLIC_SITE_URL=https://jimmychen.dev
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open [http://localhost:3000](http://localhost:3000).
 
----
+If `3000` is busy, Next.js will fall back to the next open port.
 
-## Customizing Your Content
+## Useful Scripts
 
-### Site identity (`data/site.ts`)
-
-This is the single source of truth for all personal info:
-
-- `name`, `role`, `email`, `github`, `linkedin`
-- `hero.ctaButtons` — add/remove/reorder CTA buttons
-- `tokens` — the identity tokens shown in the Tokenization section
-- `embeddingDimensions` — the dimension bars in the Embedding section
-- `skills` — listed in Embedding and Skills sections
-- `attentionHeads` — the 4 focus areas in the Multi-Head Attention section
-- `courses` — coursework in the Feed-Forward section
-
-### Project overrides (`data/project-overrides.ts`)
-
-Controls how GitHub repos appear in the portfolio:
-
-```ts
-{
-  slug: "my-repo-name",        // Exact GitHub repo name
-  title: "Display Title",      // Override the repo name
-  description: "...",          // Portfolio-facing description
-  tags: ["React", "AI"],       // Shown on card (merged with GitHub topics)
-  featured: true,              // Show in Decoder + homepage
-  order: 1,                    // Lower = earlier in lists
-  demoUrl: "https://...",      // Live demo link
-  hidden: false,               // Set true to hide from all views
-  scores: {                    // Softmax ranking scores (0–1)
-    aiml: 0.95,
-    systems: 0.8,
-    product: 0.9,
-    research: 0.85,
-  },
-}
+```bash
+npm run dev
+npm run build
+npm run start
+npm run type-check
 ```
 
-Changes to this file take effect immediately on next build or ISR refresh.
+## Content Model
 
-### Resume
+### `data/site.ts`
 
-Drop your resume PDF as `public/resume.pdf`. The Resume button links to `/resume.pdf` automatically.
+This is the primary content/config file for the portfolio. It controls:
 
-### Favicon / OG image
+- name, role, email, GitHub, LinkedIn, resume URL
+- hero input text and CTA buttons
+- tokenization / embedding / attention narrative content
+- skills and coursework
+- About section portrait + copy
+- final output CTA buttons
 
-Replace `public/favicon.ico` and `public/og-image.png` (1200×630 recommended).
+If you want to change the public-facing story of the site, start here.
 
----
+### `data/project-overrides.ts`
 
-## How GitHub Auto-Update Works
+This file lets you shape how GitHub repos appear in the portfolio:
 
-1. `lib/github.ts` fetches your public repos using the GitHub REST API.
-2. The `GITHUB_TOKEN` env var is read **server-side only** — never exposed to the browser.
-3. `next: { revalidate: 3600 }` tells Next.js to cache and re-fetch every hour.
-4. `lib/projects.ts` merges the GitHub data with your local `project-overrides.ts`.
-5. The merged data is passed as a prop to all project components at build time / ISR time.
-6. No client-side fetching occurs — GitHub data is embedded in the server-rendered HTML.
+- rewrite titles/descriptions
+- add custom tags
+- set project order
+- mark projects as featured
+- add demo URLs
+- define softmax ranking scores
 
-**Rate limits:**
-- Without a token: 60 requests/hr (enough for a personal site)
-- With a token: 5,000 requests/hr
+Overrides win over GitHub data when both exist.
 
----
+## GitHub Project Sync
 
-## Scroll Animation System
+Projects are fetched server-side in [`lib/github.ts`](./lib/github.ts) and merged in [`lib/projects.ts`](./lib/projects.ts).
 
-The cinematic section uses Framer Motion's `whileInView` + `viewport` props throughout:
+Flow:
 
-- Each stage section has a unique `id` attribute (`hero`, `tokenization`, `embedding`, etc.)
-- The `VerticalPipeline` sidebar uses `IntersectionObserver` to track which section is in view and highlights the active stage
-- Individual elements use `initial` / `whileInView` with `viewport={{ once: true }}` for one-shot reveals
-- Stagger effects use `staggerContainer` variants from `lib/animation.ts`
-- The `NeuralBackground` canvas uses `requestAnimationFrame` directly (no Framer Motion) for maximum performance
+1. Fetch public repos from the configured GitHub username
+2. Fetch per-repo language breakdowns
+3. Merge GitHub data with local overrides
+4. Render the merged project list into the homepage and `/projects`
 
-**Reduced motion:** All Framer Motion animations respect `prefers-reduced-motion`. The canvas background does not render when reduced motion is preferred. CSS animations are disabled via `globals.css`.
+The homepage and projects page both use `revalidate = 3600`, so GitHub-backed content refreshes about once per hour without client-side fetching.
 
----
+## Scroll / Animation Architecture
 
-## Deploying to Vercel
+The transformer experience lives primarily in:
 
-### One-click deploy
+- [`components/transformer/TransformerPortfolio.tsx`](./components/transformer/TransformerPortfolio.tsx)
+- [`hooks/useScrollify.ts`](./hooks/useScrollify.ts)
+- [`components/transformer/VerticalPipeline.tsx`](./components/transformer/VerticalPipeline.tsx)
+- [`components/visuals/ContinuousPipe.tsx`](./components/visuals/ContinuousPipe.tsx)
+- [`components/visuals/NeuralBackground.tsx`](./components/visuals/NeuralBackground.tsx)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+Current behavior:
 
-1. Import your GitHub repository on vercel.com/new
-2. Add environment variables in the Vercel dashboard:
-   - `GITHUB_TOKEN` (optional but recommended)
-   - `NEXT_PUBLIC_GITHUB_USERNAME` → `JimmyChen02`
-   - `NEXT_PUBLIC_SITE_URL` → your domain
-3. Click Deploy
-
-### Custom domain
-
-1. In Vercel dashboard → Settings → Domains
-2. Add your domain and follow the DNS instructions
-
-### Updating content
-
-- Push any commit to your main branch — Vercel auto-deploys
-- GitHub data refreshes automatically every hour via ISR (no redeploy needed)
-
----
+- desktop viewports use guided section snapping through the transformer stages
+- smaller viewports free-scroll naturally
+- the active pipeline stage is derived from visible section area
+- scene-level Framer Motion animations replay when re-entering sections
+- the continuous pipe is routed around content and only renders on desktop
 
 ## Project Structure
 
+```text
+app/
+  globals.css
+  layout.tsx
+  page.tsx
+  projects/page.tsx
+
+components/
+  layout/
+    Navbar.tsx
+    Footer.tsx
+  projects/
+    ProjectCard.tsx
+    ProjectsGrid.tsx
+  sections/
+    AboutSection.tsx
+    ContactSection.tsx
+    SkillsSection.tsx
+  transformer/
+    AttentionHeads.tsx
+    DecoderProjects.tsx
+    EmbeddingLayer.tsx
+    EncoderBlock.tsx
+    FeedForwardLayer.tsx
+    HeroInput.tsx
+    OutputLayer.tsx
+    PipelineStage.tsx
+    SoftmaxRanking.tsx
+    TokenizationLayer.tsx
+    TransformerPortfolio.tsx
+    VerticalPipeline.tsx
+  visuals/
+    ContinuousPipe.tsx
+    NeuralBackground.tsx
+
+data/
+  project-overrides.ts
+  site.ts
+
+hooks/
+  useScrollify.ts
+
+lib/
+  animation.ts
+  github.ts
+  projects.ts
+  utils.ts
 ```
-jimmy-portfolio/
-├── app/
-│   ├── layout.tsx              # Root layout, SEO metadata
-│   ├── page.tsx                # Homepage (server component)
-│   ├── globals.css             # Global styles, CSS variables
-│   └── api/github/route.ts     # Server-side GitHub API route
-├── components/
-│   ├── layout/
-│   │   ├── Navbar.tsx
-│   │   └── Footer.tsx
-│   ├── transformer/            # Cinematic pipeline stages
-│   │   ├── TransformerPortfolio.tsx
-│   │   ├── VerticalPipeline.tsx
-│   │   ├── PipelineStage.tsx
-│   │   ├── HeroInput.tsx
-│   │   ├── TokenizationLayer.tsx
-│   │   ├── EmbeddingLayer.tsx
-│   │   ├── EncoderBlock.tsx
-│   │   ├── AttentionHeads.tsx
-│   │   ├── FeedForwardLayer.tsx
-│   │   ├── DecoderProjects.tsx
-│   │   ├── SoftmaxRanking.tsx
-│   │   └── OutputLayer.tsx
-│   ├── visuals/                # Background effects
-│   │   ├── NeuralBackground.tsx
-│   │   ├── DataPulse.tsx
-│   │   └── GlowingConnection.tsx
-│   ├── projects/
-│   │   ├── ProjectCard.tsx
-│   │   └── ProjectsGrid.tsx
-│   └── sections/               # Standard portfolio sections
-│       ├── AboutSection.tsx
-│       ├── SkillsSection.tsx
-│       └── ContactSection.tsx
-├── lib/
-│   ├── github.ts               # Server-side GitHub API
-│   ├── projects.ts             # Data merging logic
-│   ├── animation.ts            # Framer Motion constants
-│   └── utils.ts                # cn() and helpers
-├── data/
-│   ├── site.ts                 # Personal info and content
-│   └── project-overrides.ts   # Manual project customizations
-└── public/
-    ├── resume.pdf              # Add your resume here
-    ├── og-image.png            # 1200x630 OG image
-    └── favicon.ico
-```
 
----
+## Assets
 
-## Suggested Polish After Launch
+- Add your resume at `public/resume.pdf`
+- Replace `public/og-image.png` for custom link previews
+- Remote profile images are allowed from GitHub-hosted URLs via `next.config.mjs`
 
-1. **OG image** — Design a custom 1200×630 banner using Figma or similar
-2. **Favicon** — Replace with a custom monogram or logo
-3. **Resume** — Drop a PDF in `public/resume.pdf`
-4. **Real GitHub repos** — Make sure your featured repos are public and have descriptions
-5. **Custom domain** — Point your domain to Vercel
-6. **Analytics** — Add Vercel Analytics (one line) or Plausible
-7. **Blog** — Add `app/blog/` with MDX if you want a writing section
-8. **Experience timeline** — Add a work/research timeline component in `components/sections/ExperienceSection.tsx`
-9. **Project detail pages** — Add `app/projects/[slug]/page.tsx` for deep dives
-10. **Dark/light toggle** — The design is dark-only but you can add `next-themes`
+## Deploying
 
----
+The app is set up well for Vercel:
+
+1. Import the repo into Vercel
+2. Add the environment variables above
+3. Deploy
+
+After that:
+
+- pushes trigger redeploys
+- GitHub project data refreshes automatically through ISR
+
+## Notes
+
+- The site is intentionally dark-first and motion-heavy.
+- The transformer sequence is the main storytelling surface; the standard sections below it are the fast recruiter scan.
+- The README describes the active App Router implementation under `components/transformer/*`, not older experimental files that may still exist in the repo.
 
 ## License
 
-MIT — feel free to fork and adapt for your own portfolio.
+MIT
