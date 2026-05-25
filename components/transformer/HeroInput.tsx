@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, memo } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteConfig } from "@/data/site";
 import { Github, Linkedin, FileText, ChevronDown } from "lucide-react";
@@ -11,6 +11,9 @@ const ERASE_SPEED  = 45;   // ms per char erased
 const HOLD_DONE    = 1800; // ms to pause when fully typed
 const HOLD_EMPTY   = 500;  // ms to pause when fully erased
 const CURSOR_BLINK = 530;
+
+const SUBTITLE     = "Jimmy Chen: AI/ML-focused software engineer and researcher.";
+const SUBTITLE_SPEED = 38; // ms per char — faster than name
 
 type Phase = "typing" | "holding" | "erasing" | "waiting";
 
@@ -48,6 +51,28 @@ function useLoopingTyping(text: string, startDelay = 600) {
   return { displayed, isDone: phase === "holding" };
 }
 
+/** One-shot typing that restarts each time `active` flips true→false→true */
+function useOneShotTyping(text: string, speed: number, active: boolean) {
+  const [displayed, setDisplayed] = useState("");
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (!active) { setDisplayed(""); return; }
+
+    let i = 0;
+    function tick() {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i < text.length) timerRef.current = setTimeout(tick, speed);
+    }
+    timerRef.current = setTimeout(tick, 300);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [active, text, speed]);
+
+  return displayed;
+}
+
 const ctaIcons: Record<string, React.ReactNode> = {
   GitHub: <Github size={15} />,
   LinkedIn: <Linkedin size={15} />,
@@ -79,7 +104,7 @@ function HeroInput() {
 
       {/* "raw input" label */}
       <motion.div
-        className="font-mono text-xs text-white/25 tracking-widest uppercase mb-8 flex items-center gap-3"
+        className="font-mono text-xs text-white/25 tracking-widest uppercase mb-6 flex items-center gap-3"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
@@ -88,6 +113,7 @@ function HeroInput() {
         raw input
         <span className="w-8 h-px bg-white/15" />
       </motion.div>
+
 
       {/* ── Terminal block ─────────────────────────────── */}
       <motion.div

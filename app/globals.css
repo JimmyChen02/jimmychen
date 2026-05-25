@@ -36,7 +36,7 @@ html {
   -webkit-overflow-scrolling: touch;
   /* CSS scroll-snap: only hero + tokenization are snap points;
      everything below scrolls freely */
-  scroll-snap-type: y mandatory;
+  scroll-snap-type: y proximity;
 }
 
 body {

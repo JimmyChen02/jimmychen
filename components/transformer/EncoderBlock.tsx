@@ -5,13 +5,12 @@ import { motion } from "framer-motion";
 import { siteConfig } from "@/data/site";
 import { defaultViewport, fadeUpVariants, staggerContainer } from "@/lib/animation";
 
-function NodeRow({ count, delay, color = "cyber-cyan" }: { count: number; delay: number; color?: string }) {
+function NodeRow({ count, delay, color = "orange" }: { count: number; delay: number; color?: string }) {
   const colorMap: Record<string, string> = {
-    "cyber-cyan": "bg-cyber-cyan/60 shadow-glow-sm",
-    "cyber-purple": "bg-cyber-purple/60 shadow-glow-purple",
-    "sky-400": "bg-sky-400/60",
+    "orange": "bg-knicks-orange/70",
+    "blue":   "bg-knicks-blue/70",
   };
-  const cls = colorMap[color] ?? colorMap["cyber-cyan"];
+  const cls = colorMap[color] ?? colorMap["orange"];
 
   return (
     <div className="flex gap-2 justify-center">
@@ -70,11 +69,10 @@ function EncoderBlock() {
           </motion.div>
 
           {/* Encoder neural net diagram */}
-          <div className="relative p-6 rounded-xl border border-teal-400/20 bg-teal-400/5 w-full max-w-xs">
+          <div className="relative p-6 rounded-xl border border-knicks-orange/25 bg-knicks-orange/5 w-full max-w-xs">
             <div className="flex flex-col gap-5">
-              <NodeRow count={7} delay={0} color="cyber-cyan" />
+              <NodeRow count={7} delay={0}   color="orange" />
 
-              {/* Connections hint */}
               <motion.div
                 className="flex justify-center"
                 initial={{ opacity: 0 }}
@@ -84,15 +82,12 @@ function EncoderBlock() {
               >
                 <div className="grid grid-cols-5 gap-1 w-full px-4">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="h-6 border-l border-teal-400/15 mx-auto"
-                    />
+                    <div key={i} className="h-6 border-l border-knicks-orange/20 mx-auto" />
                   ))}
                 </div>
               </motion.div>
 
-              <NodeRow count={5} delay={0.2} color="cyber-purple" />
+              <NodeRow count={5} delay={0.2} color="blue" />
 
               <motion.div
                 className="flex justify-center"
@@ -103,12 +98,12 @@ function EncoderBlock() {
               >
                 <div className="grid grid-cols-3 gap-1 w-3/4 px-4">
                   {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="h-6 border-l border-teal-400/15 mx-auto" />
+                    <div key={i} className="h-6 border-l border-knicks-blue/20 mx-auto" />
                   ))}
                 </div>
               </motion.div>
 
-              <NodeRow count={3} delay={0.4} color="sky-400" />
+              <NodeRow count={3} delay={0.4} color="orange" />
             </div>
 
             {/* Glow overlay */}
@@ -116,7 +111,7 @@ function EncoderBlock() {
               className="absolute inset-0 rounded-xl pointer-events-none"
               style={{
                 background:
-                  "radial-gradient(ellipse at center, rgba(20,184,166,0.06) 0%, transparent 70%)",
+                  "radial-gradient(ellipse at center, rgba(245,132,38,0.07) 0%, transparent 70%)",
               }}
             />
           </div>
@@ -163,14 +158,14 @@ function EncoderBlock() {
 
           {/* Context vector representation */}
           <motion.div
-            className="mt-8 p-3 rounded-lg border border-teal-400/15 bg-teal-400/5 font-mono text-xs"
+            className="mt-8 p-3 rounded-lg border border-knicks-orange/15 bg-knicks-orange/5 font-mono text-xs"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={defaultViewport}
             transition={{ delay: 0.5 }}
           >
             <span className="text-white/30">context_vector = </span>
-            <span className="text-teal-400">Encoder</span>
+            <span className="text-knicks-orange">Encoder</span>
             <span className="text-white/30">(embed(Jimmy Chen))</span>
             <br />
             <span className="text-white/20">// shape: [1, 512]  ✓</span>
