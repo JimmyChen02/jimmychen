@@ -26,8 +26,6 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
-
 ## Environment Variables
 
 Create `.env.local` and set:
@@ -84,35 +82,3 @@ npm run build
 npm run start
 npm run type-check
 ```
-
-## Active App Structure
-
-```text
-app/
-  api/github/route.ts
-  globals.css
-  layout.tsx
-  page.tsx
-  projects/page.tsx
-
-components/
-  layout/
-  projects/
-  sections/
-  transformer/
-  visuals/
-
-data/
-  project-overrides.ts
-  site.ts
-
-lib/
-  github.ts
-  projects.ts
-```
-
-This README only covers the current app implementation.
-
-## License
-
-MIT
