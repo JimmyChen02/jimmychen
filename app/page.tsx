@@ -6,6 +6,7 @@ import ProjectsGrid from "@/components/projects/ProjectsGrid";
 import AboutSection from "@/components/sections/AboutSection";
 import SkillsSection from "@/components/sections/SkillsSection";
 import ContactSection from "@/components/sections/ContactSection";
+import HomeSectionScrollRestorer from "@/components/layout/HomeSectionScrollRestorer";
 
 // ISR: re-generate this page every hour
 export const revalidate = 3600;
@@ -16,6 +17,8 @@ export default async function HomePage() {
 
   return (
     <>
+      <HomeSectionScrollRestorer />
+
       {/* ============================================================
           Cinematic Transformer scroll experience
           ============================================================ */}
