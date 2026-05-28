@@ -3,6 +3,7 @@ import { fetchEnrichedRepos } from "@/lib/github";
 import { mergeProjects } from "@/lib/projects";
 import { siteConfig } from "@/data/site";
 import ProjectsGrid from "@/components/projects/ProjectsGrid";
+import HomeSectionLink from "@/components/layout/HomeSectionLink";
 
 export const revalidate = 3600;
 
@@ -20,12 +21,12 @@ export default async function ProjectsPage() {
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-14">
-          <a
-            href="/#projects"
+          <HomeSectionLink
+            sectionId="projects"
             className="font-mono text-xs text-white/30 hover:text-white/60 transition-colors mb-4 inline-block"
           >
             ← Back home
-          </a>
+          </HomeSectionLink>
           <p className="font-mono text-xs text-cyber-cyan/50 uppercase tracking-widest mb-2">
             / projects
           </p>

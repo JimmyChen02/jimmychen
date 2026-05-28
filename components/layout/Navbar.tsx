@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteConfig } from "@/data/site";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import HomeSectionLink from "./HomeSectionLink";
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -51,27 +51,27 @@ export default function Navbar() {
     >
       <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo / Name */}
-        <Link
-          href="/"
+        <HomeSectionLink
+          sectionId="hero"
           className="font-mono text-sm font-semibold text-cyber-cyan hover:text-glow-cyan transition-colors duration-200"
-          aria-label="Jimmy Chen — home"
+          aria-label="Jimmy Chen — back to top"
         >
           <span className="text-cyber-cyan/50">&lt;</span>
           Jimmy Chen
           <span className="text-cyber-cyan/50"> /&gt;</span>
-        </Link>
+        </HomeSectionLink>
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
+            <HomeSectionLink
               key={link.href}
-              href={link.href}
+              sectionId={link.href.slice(1)}
               className="text-sm text-white/60 hover:text-white transition-colors duration-200 relative group"
             >
               {link.label}
               <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-cyber-cyan group-hover:w-full transition-all duration-300" />
-            </a>
+            </HomeSectionLink>
           ))}
           <a
             href={siteConfig.resumeUrl}
@@ -106,14 +106,14 @@ export default function Navbar() {
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               {navLinks.map((link) => (
-                <a
+                <HomeSectionLink
                   key={link.href}
-                  href={link.href}
+                  sectionId={link.href.slice(1)}
                   onClick={() => setMobileOpen(false)}
                   className="text-white/70 hover:text-white transition-colors py-1"
                 >
                   {link.label}
-                </a>
+                </HomeSectionLink>
               ))}
               <a
                 href={siteConfig.resumeUrl}

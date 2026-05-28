@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { Github, Linkedin, Mail, ExternalLink } from "lucide-react";
 import { siteConfig } from "@/data/site";
+import HomeSectionLink from "./HomeSectionLink";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -31,12 +31,12 @@ export default function Footer() {
                 { label: "Contact", href: "#contact" },
               ].map((l) => (
                 <li key={l.href}>
-                  <a
-                    href={l.href}
+                  <HomeSectionLink
+                    sectionId={l.href.slice(1)}
                     className="text-white/50 hover:text-white text-sm transition-colors"
                   >
                     {l.label}
-                  </a>
+                  </HomeSectionLink>
                 </li>
               ))}
             </ul>
