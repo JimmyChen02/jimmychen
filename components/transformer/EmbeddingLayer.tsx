@@ -1,11 +1,11 @@
 "use client";
 
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteConfig } from "@/data/site";
 import { defaultViewport, staggerContainer } from "@/lib/animation";
 
-const stageViewport = { once: false, amount: 0.55, margin: "-5% 0px -5% 0px" } as const;
+const stageViewport = { once: false, amount: 0.25, margin: "-5% 0px -10% 0px" } as const;
 
 // Each token gets a deterministic but "realistic-looking" embedding vector
 // Values are seeded per token so they look like real BERT floats
@@ -134,24 +134,31 @@ const skillColors: Record<string, string> = {
 function EmbeddingLayer() {
   const [revealed, setRevealed] = useState(false);
   const [replayKey, setReplayKey] = useState(0);
+  const hasRevealedRef = useRef(false);
 
   const tokens = siteConfig.tokens;
+
+  function handleViewportEnter() {
+    if (hasRevealedRef.current) {
+      return;
+    }
+
+    hasRevealedRef.current = true;
+    setReplayKey((value) => value + 1);
+    setRevealed(true);
+  }
 
   return (
     <motion.section
       id="embedding"
-      className="relative min-h-screen px-6 flex flex-col items-center justify-center pt-24 pb-16 overflow-hidden"
+      className="relative min-h-0 sm:min-h-screen px-6 flex flex-col items-center justify-start sm:justify-center pt-24 pb-10 sm:pb-16 overflow-hidden"
       aria-label="Embedding layer"
-      onViewportEnter={() => {
-        setReplayKey((value) => value + 1);
-        setRevealed(true);
-      }}
-      onViewportLeave={() => setRevealed(false)}
+      onViewportEnter={handleViewportEnter}
       viewport={stageViewport}
     >
       {/* Stage header */}
       <motion.div
-        className="text-center mb-16"
+        className="text-center mb-10 sm:mb-16"
         initial={{ opacity: 0, y: 20 }}
         animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
@@ -164,7 +171,7 @@ function EmbeddingLayer() {
         </p>
       </motion.div>
 
-      <div className="w-full max-w-3xl space-y-14">
+      <div className="w-full max-w-3xl space-y-10 sm:space-y-14">
 
         {/* ── BERT model label ─────────────────────────── */}
         <motion.div

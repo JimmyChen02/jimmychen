@@ -229,7 +229,7 @@ function TokenizationLayer() {
   return (
     <motion.section
       id="tokenization"
-      className="relative min-h-[82svh] lg:min-h-[84svh] px-6 pt-20 pb-8 lg:pt-24 lg:pb-10 flex flex-col items-center justify-center"
+      className="relative min-h-0 sm:min-h-[82svh] lg:min-h-[84svh] px-6 pt-20 pb-6 sm:pb-8 lg:pt-24 lg:pb-10 flex flex-col items-center justify-start sm:justify-center"
       aria-label="Tokenization layer"
       onViewportEnter={handleViewportEnter}
       onViewportLeave={handleViewportLeave}
@@ -241,7 +241,7 @@ function TokenizationLayer() {
       {/* Header */}
       <motion.div
         layout
-        className="text-center mb-8"
+        className="text-center mb-6 sm:mb-8"
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
@@ -256,7 +256,7 @@ function TokenizationLayer() {
 
       {/* LayoutGroup lets layoutId animate across the text-box → chip-row transition */}
       <LayoutGroup>
-        <motion.div layout className="w-full space-y-7 lg:space-y-8">
+        <motion.div layout className="w-full space-y-6 sm:space-y-7 lg:space-y-8">
 
           {/* ── Raw input box ──────────────────────────────── */}
           <div className="flex flex-col items-center gap-2.5">
