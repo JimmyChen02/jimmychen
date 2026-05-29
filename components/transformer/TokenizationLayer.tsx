@@ -229,7 +229,7 @@ function TokenizationLayer() {
   return (
     <motion.section
       id="tokenization"
-      className="relative min-h-0 sm:min-h-[82svh] lg:min-h-[84svh] px-6 pt-14 pb-6 sm:pt-20 sm:pb-8 lg:pt-24 lg:pb-10 flex flex-col items-center justify-start sm:justify-center"
+      className="relative min-h-0 sm:min-h-[82svh] lg:min-h-[84svh] px-6 pt-20 pb-6 sm:pb-8 lg:pt-24 lg:pb-10 flex flex-col items-center justify-start sm:justify-center"
       aria-label="Tokenization layer"
       onViewportEnter={handleViewportEnter}
       onViewportLeave={handleViewportLeave}
