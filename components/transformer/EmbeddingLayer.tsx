@@ -140,7 +140,7 @@ function EmbeddingLayer() {
   return (
     <motion.section
       id="embedding"
-      className="relative min-h-screen px-6 flex flex-col items-center justify-center pt-24 pb-16 overflow-hidden"
+      className="relative min-h-0 sm:min-h-screen px-6 flex flex-col items-center justify-start sm:justify-center pt-14 pb-10 sm:pt-24 sm:pb-16 overflow-hidden"
       aria-label="Embedding layer"
       onViewportEnter={() => {
         setReplayKey((value) => value + 1);
@@ -151,7 +151,7 @@ function EmbeddingLayer() {
     >
       {/* Stage header */}
       <motion.div
-        className="text-center mb-16"
+        className="text-center mb-10 sm:mb-16"
         initial={{ opacity: 0, y: 20 }}
         animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
@@ -164,7 +164,7 @@ function EmbeddingLayer() {
         </p>
       </motion.div>
 
-      <div className="w-full max-w-3xl space-y-14">
+      <div className="w-full max-w-3xl space-y-10 sm:space-y-14">
 
         {/* ── BERT model label ─────────────────────────── */}
         <motion.div
