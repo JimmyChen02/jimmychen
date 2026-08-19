@@ -4,12 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Camera } from "lucide-react";
 import MotionReveal from "@/components/motion/MotionReveal";
-import { photos, type Photo } from "@/data/photography";
+import { featuredPhotos, photos, type Photo } from "@/data/photography";
 
 export default function PhotographySection() {
   return (
     <section id="photography" className="ruled-divider relative overflow-hidden bg-[#0b2031] py-24 sm:py-32" aria-labelledby="photography-title">
-      <div className="pointer-events-none absolute -right-20 top-10 font-mono text-[16rem] leading-none text-paper/[0.018]" aria-hidden="true">35</div>
+      <div className="pointer-events-none absolute -right-20 top-10 font-mono text-[16rem] leading-none text-paper/[0.018]" aria-hidden="true">41</div>
       <div className="mx-auto max-w-6xl px-6">
         <MotionReveal>
           <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
@@ -25,7 +25,7 @@ export default function PhotographySection() {
         </MotionReveal>
 
         <div className="mt-16 grid gap-4 md:grid-cols-12 md:grid-rows-[20rem_16rem_22rem] lg:grid-rows-[28rem_19rem_30rem]">
-          {photos.map((frame, index) => (
+          {featuredPhotos.map((frame, index) => (
             <MotionReveal key={frame.id} className={`${frame.className} h-full`} delay={index * 0.05}>
               <PhotoFrame frame={frame} />
             </MotionReveal>
@@ -62,7 +62,9 @@ function PhotoFrame({ frame }: { frame: Photo }) {
       />
       <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between bg-gradient-to-t from-[#06131f]/80 via-[#06131f]/20 to-transparent px-4 pb-4 pt-16 sm:px-5 sm:pb-5">
         <span className="text-sm font-medium tracking-[-0.01em] text-paper">{frame.caption}</span>
-        <span className="font-mono text-[9px] tracking-[0.18em] text-paper/65">{frame.id} / 05</span>
+        <span className="font-mono text-[9px] tracking-[0.18em] text-paper/65">
+          {frame.id} / {String(photos.length).padStart(2, "0")}
+        </span>
       </figcaption>
     </figure>
   );

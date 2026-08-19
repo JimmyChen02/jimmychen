@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
 import HomeSectionLink from "@/components/layout/HomeSectionLink";
-import { photoLocations, type Photo } from "@/data/photography";
+import { photoLocations, photos, type Photo } from "@/data/photography";
 
 export const metadata: Metadata = {
   title: "Photo Archive",
@@ -13,7 +13,7 @@ export default function PhotographyPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0b2031] px-6 pb-20 pt-28 sm:pb-28 sm:pt-32">
       <div className="pointer-events-none absolute -right-20 top-20 font-mono text-[16rem] leading-none text-paper/[0.018]" aria-hidden="true">
-        35
+        41
       </div>
 
       <div className="relative mx-auto max-w-6xl">
@@ -94,7 +94,9 @@ function ArchivePhoto({ photo, priority }: { photo: Photo; priority: boolean }) 
       </div>
       <figcaption className="flex items-center justify-between gap-4 border-t border-paper/10 px-4 py-3">
         <span className="text-sm text-paper/80">{photo.caption}</span>
-        <span className="shrink-0 font-mono text-[8px] tracking-[0.18em] text-paper/35">{photo.id} / 05</span>
+        <span className="shrink-0 font-mono text-[8px] tracking-[0.18em] text-paper/35">
+          {photo.id} / {String(photos.length).padStart(2, "0")}
+        </span>
       </figcaption>
     </figure>
   );
