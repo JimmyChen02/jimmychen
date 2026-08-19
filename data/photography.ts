@@ -200,7 +200,7 @@ export const photos = [
   }),
   archivePhoto({
     id: "15",
-    caption: "Bear cubs in the square",
+    caption: "Cool statue",
     alt: "A sculpture of bear cubs beside flower boxes in Old Québec",
     location: "Québec City, Québec",
     width: 5472,
