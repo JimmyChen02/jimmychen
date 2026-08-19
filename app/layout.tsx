@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     url: siteConfig.siteUrl,
     title: `${siteConfig.name} — ${siteConfig.role}`,
     description: siteConfig.description,
-    siteName: `${siteConfig.name} Portfolio`,
+    siteName: `${siteConfig.name}'s Portfolio`,
     images: [
       {
         url: siteConfig.ogImage,
