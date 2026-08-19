@@ -32,3 +32,6 @@ next-env.d.ts
 
 # OS
 .DS_Store
+
+# Superdesign scratch files
+.superdesign/tmp/

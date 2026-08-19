@@ -54,7 +54,7 @@ function ContactSection() {
         whileInView="visible"
         viewport={defaultViewport}
       >
-        <p className="font-mono text-xs text-cyber-cyan/50 uppercase tracking-widest mb-2">
+        <p className="font-mono text-xs text-knicks-orange/50 uppercase tracking-widest mb-2">
           / contact
         </p>
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
@@ -72,26 +72,26 @@ function ContactSection() {
             key={link.label}
             href={link.href}
             {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-            className="flex items-start gap-4 p-5 rounded-xl border border-white/8 bg-white/3 hover:border-cyber-cyan/30 hover:bg-white/5 transition-all duration-300 group"
+            className="flex items-start gap-4 p-5 rounded-xl border border-white/8 bg-white/3 hover:border-knicks-orange/30 hover:bg-white/5 transition-all duration-300 group"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={defaultViewport}
             transition={{ delay: i * 0.1, duration: 0.4 }}
             whileHover={{ y: -2 }}
           >
-            <span className="text-cyber-cyan/60 group-hover:text-cyber-cyan transition-colors mt-0.5 shrink-0">
+            <span className="text-knicks-orange/60 group-hover:text-knicks-orange transition-colors mt-0.5 shrink-0">
               {link.icon}
             </span>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-mono text-white/30 mb-0.5">{link.label}</p>
+              <p className="text-xs font-mono text-white/50 mb-0.5">{link.label}</p>
               <p className="text-sm font-medium text-white/80 group-hover:text-white transition-colors truncate">
                 {link.value}
               </p>
-              <p className="text-xs text-white/35 mt-0.5">{link.description}</p>
+              <p className="text-xs text-white/50 mt-0.5">{link.description}</p>
             </div>
             <ArrowRight
               size={15}
-              className="text-white/20 group-hover:text-cyber-cyan group-hover:translate-x-1 transition-all mt-1 shrink-0"
+              className="text-white/45 group-hover:text-knicks-orange group-hover:translate-x-1 transition-all mt-1 shrink-0"
             />
           </motion.a>
         ))}

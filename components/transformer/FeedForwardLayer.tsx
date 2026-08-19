@@ -9,7 +9,7 @@ function NeuronRow({
   count,
   active,
   delay,
-  color = "cyber-cyan",
+  color = "knicks-orange",
 }: {
   count: number;
   active: boolean;
@@ -17,11 +17,11 @@ function NeuronRow({
   color?: string;
 }) {
   const dotColor =
-    color === "cyber-purple"
-      ? "bg-cyber-purple/70"
+    color === "knicks-blue"
+      ? "bg-knicks-blue/70"
       : color === "amber"
       ? "bg-amber-400/70"
-      : "bg-cyber-cyan/70";
+      : "bg-knicks-orange/70";
 
   return (
     <div className="flex gap-2 justify-center">
@@ -84,7 +84,7 @@ function FeedForwardLayer() {
         {/* MLP diagram */}
         <div className="flex flex-col items-center">
           <motion.p
-            className="font-mono text-xs text-white/20 uppercase tracking-widest mb-6"
+            className="font-mono text-xs text-white/45 uppercase tracking-widest mb-6"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={defaultViewport}
@@ -96,14 +96,14 @@ function FeedForwardLayer() {
             className="relative p-6 rounded-xl border border-amber-400/20 bg-amber-400/3 w-full flex flex-col gap-6"
           >
             {/* Layer labels */}
-            <div className="flex justify-between font-mono text-xs text-white/20 px-2">
+            <div className="flex justify-between font-mono text-xs text-white/45 px-2">
               <span>Input</span>
               <span>Hidden × 2</span>
               <span>Output</span>
             </div>
 
             {/* Input layer */}
-            <NeuronRow count={6} active delay={0} color="cyber-cyan" />
+            <NeuronRow count={6} active delay={0} color="knicks-orange" />
 
             {/* ReLU activation indicator */}
             <motion.div
@@ -123,7 +123,7 @@ function FeedForwardLayer() {
             <NeuronRow count={8} active delay={0.25} color="amber" />
 
             <motion.div
-              className="text-center font-mono text-xs text-white/20"
+              className="text-center font-mono text-xs text-white/45"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={defaultViewport}
@@ -133,7 +133,7 @@ function FeedForwardLayer() {
             </motion.div>
 
             {/* Output */}
-            <NeuronRow count={4} active delay={0.35} color="cyber-purple" />
+            <NeuronRow count={4} active delay={0.35} color="knicks-blue" />
 
             {/* Glow */}
             <div
@@ -149,7 +149,7 @@ function FeedForwardLayer() {
         {/* Coursework */}
         <div>
           <motion.h3
-            className="text-sm font-mono uppercase tracking-widest text-white/30 mb-6"
+            className="text-sm font-mono uppercase tracking-widest text-white/50 mb-6"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={defaultViewport}
@@ -182,7 +182,7 @@ function FeedForwardLayer() {
                     {course.name}
                   </span>
                 </div>
-                <span className="font-mono text-xs text-white/20 shrink-0">
+                <span className="font-mono text-xs text-white/45 shrink-0">
                   {course.code}
                 </span>
               </motion.div>
@@ -190,7 +190,7 @@ function FeedForwardLayer() {
           </div>
 
           <motion.p
-            className="mt-6 font-mono text-xs text-white/20"
+            className="mt-6 font-mono text-xs text-white/45"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={defaultViewport}

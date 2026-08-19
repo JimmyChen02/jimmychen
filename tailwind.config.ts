@@ -5,13 +5,14 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./data/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
         // Core palette
-        "cyber-black": "#020408",
-        "cyber-navy": "#030d1a",
+        "cyber-black": "#081827",
+        "cyber-navy": "#0d2942",
         "cyber-blue": "#0ea5e9",
         "cyber-cyan": "#06b6d4",
         "cyber-purple": "#8b5cf6",
@@ -22,22 +23,25 @@ const config: Config = {
         "glow-blue": "#38bdf8",
         "glow-cyan": "#67e8f9",
         "glow-purple": "#a78bfa",
-        // Knicks accent (used only in Encoder + Attention + project bars)
+        // Knicks accent — now the site's primary palette
         "knicks-orange": "#F58426",
         "knicks-blue": "#006BB6",
+        paper: "#F3EFE4",
+        "paper-muted": "#B8C2C8",
         // Neutrals
         "panel-bg": "rgba(10, 20, 40, 0.7)",
-        "panel-border": "rgba(6, 182, 212, 0.2)",
+        "panel-border": "rgba(245, 132, 38, 0.2)",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+        serif: ["Georgia", "Times New Roman", "serif"],
       },
       backgroundImage: {
         "grid-pattern":
-          "linear-gradient(rgba(6,182,212,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.05) 1px, transparent 1px)",
+          "linear-gradient(rgba(245,132,38,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(245,132,38,0.05) 1px, transparent 1px)",
         "radial-glow":
-          "radial-gradient(ellipse at center, rgba(6,182,212,0.15) 0%, transparent 70%)",
+          "radial-gradient(ellipse at center, rgba(245,132,38,0.15) 0%, transparent 70%)",
       },
       backgroundSize: {
         "grid-sm": "40px 40px",
@@ -72,11 +76,11 @@ const config: Config = {
         },
       },
       boxShadow: {
-        "glow-sm": "0 0 8px rgba(6, 182, 212, 0.4)",
-        "glow-md": "0 0 16px rgba(6, 182, 212, 0.5)",
-        "glow-lg": "0 0 32px rgba(6, 182, 212, 0.4), 0 0 64px rgba(6, 182, 212, 0.2)",
-        "glow-purple": "0 0 16px rgba(139, 92, 246, 0.5)",
-        "glow-blue": "0 0 16px rgba(14, 165, 233, 0.5)",
+        "glow-sm": "0 0 8px rgba(245, 132, 38, 0.4)",
+        "glow-md": "0 0 16px rgba(245, 132, 38, 0.5)",
+        "glow-lg": "0 0 32px rgba(245, 132, 38, 0.4), 0 0 64px rgba(245, 132, 38, 0.2)",
+        "glow-purple": "0 0 16px rgba(0, 107, 182, 0.5)",
+        "glow-blue": "0 0 16px rgba(0, 107, 182, 0.5)",
         "glass": "0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.05)",
       },
       backdropBlur: {

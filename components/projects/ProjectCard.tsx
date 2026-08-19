@@ -36,14 +36,14 @@ function ProjectCard({ project, className }: ProjectCardProps) {
     <article
       className={cn(
         "group flex flex-col p-5 rounded-xl border border-white/8 bg-white/3",
-        "hover:border-cyber-cyan/30 hover:bg-white/5 transition-all duration-300",
+        "hover:border-knicks-orange/30 hover:bg-white/5 transition-all duration-300",
         "backdrop-blur-sm",
         className
       )}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3 gap-2">
-        <h3 className="font-semibold text-white group-hover:text-cyber-cyan transition-colors text-base leading-snug">
+        <h3 className="font-semibold text-white group-hover:text-knicks-orange transition-colors text-base leading-snug">
           {project.title}
         </h3>
         <div className="flex items-center gap-2 shrink-0">
@@ -52,7 +52,7 @@ function ProjectCard({ project, className }: ProjectCardProps) {
               href={project.demoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/30 hover:text-cyber-cyan transition-colors"
+              className="text-white/50 hover:text-knicks-orange transition-colors"
               aria-label={`${project.title} live demo`}
             >
               <ExternalLink size={15} />
@@ -63,7 +63,7 @@ function ProjectCard({ project, className }: ProjectCardProps) {
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/30 hover:text-cyber-cyan transition-colors"
+              className="text-white/50 hover:text-knicks-orange transition-colors"
               aria-label={`${project.title} on GitHub`}
             >
               <Github size={15} />
@@ -92,7 +92,7 @@ function ProjectCard({ project, className }: ProjectCardProps) {
       )}
 
       {/* Meta footer */}
-      <div className="flex items-center gap-3 text-xs text-white/25 font-mono pt-3 border-t border-white/5">
+      <div className="flex items-center gap-3 text-xs text-white/50 font-mono pt-3 border-t border-white/5">
         {displayLang && (
           <span className="flex items-center gap-1.5">
             <span

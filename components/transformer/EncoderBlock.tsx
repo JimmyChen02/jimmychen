@@ -49,7 +49,7 @@ function EncoderBlock() {
         viewport={defaultViewport}
       >
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
-          Understanding Jimmy
+          Understanding Me
         </h2>
         <p className="text-white/40 font-mono text-sm max-w-md mx-auto">
           Encoding the full context representation
@@ -60,7 +60,7 @@ function EncoderBlock() {
         {/* Neural visualization */}
         <div className="flex flex-col items-center gap-4">
           <motion.div
-            className="text-xs font-mono text-white/20 uppercase tracking-widest mb-2"
+            className="text-xs font-mono text-white/45 uppercase tracking-widest mb-2"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={defaultViewport}
@@ -117,7 +117,7 @@ function EncoderBlock() {
           </div>
 
           <motion.p
-            className="font-mono text-xs text-white/20"
+            className="font-mono text-xs text-white/45"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={defaultViewport}
@@ -134,9 +134,6 @@ function EncoderBlock() {
           whileInView="visible"
           viewport={defaultViewport}
         >
-          <h3 className="text-xl font-semibold text-white mb-6">
-            About Me
-          </h3>
           <div className="space-y-4">
             {siteConfig.about.paragraphs.map((para, i) => (
               <motion.p
@@ -164,11 +161,11 @@ function EncoderBlock() {
             viewport={defaultViewport}
             transition={{ delay: 0.5 }}
           >
-            <span className="text-white/30">context_vector = </span>
+            <span className="text-white/50">context_vector = </span>
             <span className="text-knicks-orange">Encoder</span>
-            <span className="text-white/30">(embed(Jimmy Chen))</span>
+            <span className="text-white/50">(embed(Jimmy Chen))</span>
             <br />
-            <span className="text-white/20">// shape: [1, 512]  ✓</span>
+            <span className="text-white/45">// shape: [1, 512]  ✓</span>
           </motion.div>
         </motion.div>
       </div>

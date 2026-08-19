@@ -60,7 +60,7 @@ function AboutSection() {
         whileInView="visible"
         viewport={defaultViewport}
       >
-        <p className="font-mono text-xs text-cyber-cyan/50 uppercase tracking-widest mb-2">
+        <p className="font-mono text-xs text-knicks-orange/50 uppercase tracking-widest mb-2">
           / about
         </p>
         <h2 className="text-3xl sm:text-4xl font-bold text-white">About Me</h2>
@@ -114,7 +114,7 @@ function AboutSection() {
               href={siteConfig.resumeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-cyber-cyan/35 bg-cyber-cyan/6 text-cyber-cyan hover:bg-cyber-cyan/12 text-sm transition-all shadow-[0_0_18px_rgba(6,182,212,0.12)]"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-knicks-orange/35 bg-knicks-orange/6 text-knicks-orange hover:bg-knicks-orange/12 text-sm transition-all shadow-[0_0_18px_rgba(245,132,38,0.12)]"
             >
               <FileText size={14} /> Resume
             </a>
@@ -122,7 +122,7 @@ function AboutSection() {
 
           {/* Skill badge row — driven by siteConfig.skills */}
           <div className="pt-2">
-            <p className="font-mono text-[10px] text-white/25 uppercase tracking-widest mb-3">
+            <p className="font-mono text-[10px] text-white/50 uppercase tracking-widest mb-3">
               Skills
             </p>
             <div className="flex flex-wrap gap-2">
@@ -161,13 +161,13 @@ function AboutSection() {
           {/* Portrait — flex-1 + min-h-0 so it fills whatever space is left
               after the stats card, keeping both columns the same height.
               No fixed aspect ratio; the grid row height drives it.           */}
-          <div className="relative aspect-square rounded-2xl overflow-hidden border border-cyber-cyan/15 shadow-[0_0_40px_rgba(6,182,212,0.10)]">
+          <div className="relative aspect-square rounded-2xl overflow-hidden border border-knicks-orange/15 shadow-[0_0_40px_rgba(245,132,38,0.10)]">
             {/* Top cyan radial glow */}
             <div
               className="absolute inset-0 z-10 pointer-events-none"
               style={{
                 background:
-                  "radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.14) 0%, transparent 60%)",
+                  "radial-gradient(ellipse at 50% 0%, rgba(245,132,38,0.14) 0%, transparent 60%)",
               }}
               aria-hidden="true"
             />
@@ -215,7 +215,7 @@ function AboutSection() {
                 viewport={defaultViewport}
                 transition={{ delay: i * 0.07 }}
               >
-                <div className="flex items-center gap-1.5 text-white/30">
+                <div className="flex items-center gap-1.5 text-white/50">
                   {row.icon}
                   <span className="font-mono text-[10px] uppercase tracking-widest">
                     {row.label}

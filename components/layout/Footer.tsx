@@ -1,98 +1,46 @@
-import { Github, Linkedin, Mail, ExternalLink } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/data/site";
 import HomeSectionLink from "./HomeSectionLink";
 
 export default function Footer() {
-  const year = new Date().getFullYear();
-
   return (
-    <footer className="border-t border-cyber-cyan/10 bg-cyber-navy/60 backdrop-blur-sm">
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-          {/* Brand */}
-          <div>
-            <p className="font-mono text-cyber-cyan text-sm mb-2">Jimmy Chen</p>
-            <p className="text-white/40 text-xs leading-relaxed max-w-xs">
-              CS student at Cornell Engineering. Building at the intersection of
-              AI, ML, NLP, and software systems.
-            </p>
+    <footer className="border-t border-paper/15 bg-cyber-black">
+      <div className="mx-auto max-w-6xl px-6 py-10 sm:py-12">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-5">
+            <p className="font-mono text-xs text-knicks-orange">jimmy.chen()</p>
+            <p className="mt-3 max-w-sm text-sm leading-6 text-paper-muted">A small corner of the internet for experiments, research, and software I cared enough to finish.</p>
+            <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.16em] text-paper/35">New York / Ithaca</p>
           </div>
 
-          {/* Quick links */}
-          <div>
-            <p className="text-white/60 text-xs uppercase tracking-widest mb-3 font-mono">
-              Navigate
-            </p>
-            <ul className="space-y-2">
-              {[
-                { label: "Projects", href: "#projects" },
-                { label: "About", href: "#about" },
-                { label: "Skills", href: "#skills" },
-                { label: "Contact", href: "#contact" },
-              ].map((l) => (
-                <li key={l.href}>
-                  <HomeSectionLink
-                    sectionId={l.href.slice(1)}
-                    className="text-white/50 hover:text-white text-sm transition-colors"
-                  >
-                    {l.label}
-                  </HomeSectionLink>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="grid gap-8 sm:grid-cols-2 lg:col-span-7 lg:grid-cols-[1.35fr_1fr]">
+            <div className="border-t border-paper/10 pt-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-paper/35">01 / Navigate</p>
+              <nav className="mt-4 grid grid-cols-2 gap-x-5 gap-y-3 text-sm text-paper-muted sm:grid-cols-3" aria-label="Footer navigation">
+                <HomeSectionLink sectionId="work" className="cursor-pointer transition-colors duration-200 hover:text-knicks-orange">Work</HomeSectionLink>
+                <HomeSectionLink sectionId="experience" className="cursor-pointer transition-colors duration-200 hover:text-knicks-orange">Experience</HomeSectionLink>
+                <HomeSectionLink sectionId="photography" className="cursor-pointer transition-colors duration-200 hover:text-knicks-orange">Photography</HomeSectionLink>
+                <HomeSectionLink sectionId="contact" className="cursor-pointer transition-colors duration-200 hover:text-knicks-orange">Contact</HomeSectionLink>
+                <Link href="/projects" className="cursor-pointer transition-colors duration-200 hover:text-knicks-orange">Projects</Link>
+              </nav>
+            </div>
 
-          {/* Social */}
-          <div>
-            <p className="text-white/60 text-xs uppercase tracking-widest mb-3 font-mono">
-              Connect
-            </p>
-            <div className="flex gap-4">
-              <a
-                href={siteConfig.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub"
-                className="text-white/40 hover:text-cyber-cyan transition-colors"
-              >
-                <Github size={18} />
-              </a>
-              <a
-                href={siteConfig.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="text-white/40 hover:text-cyber-cyan transition-colors"
-              >
-                <Linkedin size={18} />
-              </a>
-              <a
-                href={`mailto:${siteConfig.email}`}
-                aria-label="Email"
-                className="text-white/40 hover:text-cyber-cyan transition-colors"
-              >
-                <Mail size={18} />
-              </a>
-              <a
-                href={siteConfig.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Resume"
-                className="text-white/40 hover:text-cyber-cyan transition-colors"
-              >
-                <ExternalLink size={18} />
-              </a>
+            <div className="border-t border-paper/10 pt-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-paper/35">02 / Connect</p>
+              <div className="mt-4 grid gap-3 text-sm text-paper-muted">
+                <a href={siteConfig.github} target="_blank" rel="noopener noreferrer" className="group inline-flex w-fit cursor-pointer items-center gap-1.5 transition-colors duration-200 hover:text-knicks-orange">
+                  GitHub <ArrowUpRight size={13} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+                </a>
+                <a href={siteConfig.linkedin} target="_blank" rel="noopener noreferrer" className="group inline-flex w-fit cursor-pointer items-center gap-1.5 transition-colors duration-200 hover:text-knicks-orange">
+                  LinkedIn <ArrowUpRight size={13} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+                </a>
+                <a href={`mailto:${siteConfig.email}`} className="group inline-flex w-fit cursor-pointer items-center gap-1.5 transition-colors duration-200 hover:text-knicks-orange">
+                  Email <ArrowUpRight size={13} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2">
-          <p className="text-white/25 text-xs font-mono">
-            © {year} Jimmy Chen. All rights reserved.
-          </p>
-          <p className="text-white/20 text-xs font-mono">
-            Built with Next.js · Framer Motion · Tailwind
-          </p>
         </div>
       </div>
     </footer>

@@ -142,9 +142,9 @@ export const pulseVariants: Variants = {
 // ---------------------------------------------------------------------------
 export const glowPulseAnimation = {
   boxShadow: [
-    "0 0 8px rgba(6, 182, 212, 0.3)",
-    "0 0 24px rgba(6, 182, 212, 0.7)",
-    "0 0 8px rgba(6, 182, 212, 0.3)",
+    "0 0 8px rgba(245, 132, 38, 0.3)",
+    "0 0 24px rgba(245, 132, 38, 0.7)",
+    "0 0 8px rgba(245, 132, 38, 0.3)",
   ],
   transition: {
     duration: 2,

@@ -23,8 +23,8 @@ const DIMS = 8; // displayed dims (real BERT is 768)
 
 /** Colour a float value: positive → cyan, negative → purple, neutral → white */
 function valueColor(v: number): string {
-  if (v > 0.5)  return "text-cyber-cyan";
-  if (v < -0.3) return "text-purple-400";
+  if (v > 0.5)  return "text-knicks-orange";
+  if (v < -0.3) return "text-knicks-blue";
   return "text-white/50";
 }
 
@@ -71,10 +71,10 @@ function TokenEmbedCard({
     >
       {/* Token label bar */}
       <div className="flex items-center gap-2 px-3 py-2 border-b border-white/5 bg-white/[0.015]">
-        <span className="font-mono text-[10px] text-white/20 w-4 shrink-0">{index}</span>
+        <span className="font-mono text-[10px] text-white/45 w-4 shrink-0">{index}</span>
         <span className="w-px h-3 bg-white/10 shrink-0" />
         <span className="font-mono text-xs text-white/70 truncate">{label}</span>
-        <span className="ml-auto font-mono text-[10px] text-white/15 shrink-0">d=768</span>
+        <span className="ml-auto font-mono text-[10px] text-white/45 shrink-0">d=768</span>
       </div>
 
       {/* Vector heatmap + numbers */}
@@ -87,8 +87,8 @@ function TokenEmbedCard({
               className="flex-1 rounded-sm"
               style={{
                 backgroundColor: v >= 0
-                  ? `rgba(6,182,212,${heatOpacity(v)})`
-                  : `rgba(139,92,246,${heatOpacity(v)})`,
+                  ? `rgba(245,132,38,${heatOpacity(v)})`
+                  : `rgba(0,107,182,${heatOpacity(v)})`,
               }}
               initial={{ scaleY: 0, originY: 1 }}
               animate={showNums ? { scaleY: 1 } : { scaleY: 0 }}
@@ -109,12 +109,12 @@ function TokenEmbedCard({
                 transition={{ delay: i * 0.035 }}
               >
                 {v.toFixed(2)}
-                {i < vector.length - 1 && <span className="text-white/15">,</span>}
+                {i < vector.length - 1 && <span className="text-white/45">,</span>}
               </motion.span>
             ))}
           </AnimatePresence>
           {showNums && (
-            <span className="font-mono text-[9px] text-white/15">…</span>
+            <span className="font-mono text-[9px] text-white/45">…</span>
           )}
         </div>
       </div>
@@ -124,7 +124,7 @@ function TokenEmbedCard({
 
 // ─────────────────────────────────────────────────────────
 const skillColors: Record<string, string> = {
-  lang:      "border-cyber-cyan/25 text-cyber-cyan/80 bg-cyber-cyan/4",
+  lang:      "border-knicks-orange/25 text-knicks-orange/80 bg-knicks-orange/4",
   framework: "border-white/15 text-white/60 bg-white/3",
   ml:        "border-amber-400/25 text-amber-400/80 bg-amber-400/4",
   data:      "border-teal-400/25 text-teal-400/80 bg-teal-400/4",
@@ -163,9 +163,9 @@ function EmbeddingLayer() {
         transition={{ duration: 0.5 }}
       >
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
-          Token → Embedding Vector
+          What I&apos;m Interested In
         </h2>
-        <p className="text-white/35 font-mono text-sm">
+        <p className="text-white/50 font-mono text-sm">
           BERT embedding · d<sub>model</sub> = 768
         </p>
       </motion.div>
@@ -179,14 +179,14 @@ function EmbeddingLayer() {
           animate={revealed ? { opacity: 1 } : { opacity: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <div className="px-5 py-2.5 rounded-lg border border-cyber-cyan/20 bg-cyber-cyan/5 font-mono text-sm text-cyber-cyan/70 flex items-center gap-3">
+          <div className="px-5 py-2.5 rounded-lg border border-knicks-orange/20 bg-knicks-orange/5 font-mono text-sm text-knicks-orange/70 flex items-center gap-3">
             <motion.div
-              className="w-1.5 h-1.5 rounded-full bg-cyber-cyan"
+              className="w-1.5 h-1.5 rounded-full bg-knicks-orange"
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
             BertModel · bert-base-uncased
-            <span className="text-white/20 text-xs ml-1">110M params</span>
+            <span className="text-white/45 text-xs ml-1">110M params</span>
           </div>
 
           {/* Downward connector */}
@@ -199,7 +199,7 @@ function EmbeddingLayer() {
         {/* ── Embedding cards grid ─────────────────────── */}
         <div>
           <motion.p
-            className="font-mono text-xs text-white/20 uppercase tracking-widest mb-5 text-center"
+            className="font-mono text-xs text-white/45 uppercase tracking-widest mb-5 text-center"
             initial={{ opacity: 0 }}
             animate={revealed ? { opacity: 1 } : { opacity: 0 }}
             transition={{ delay: 0.2 }}
@@ -222,7 +222,7 @@ function EmbeddingLayer() {
 
           {/* Shape annotation */}
           <motion.p
-            className="font-mono text-xs text-white/15 text-center mt-5"
+            className="font-mono text-xs text-white/45 text-center mt-5"
             initial={{ opacity: 0 }}
             animate={revealed ? { opacity: 1 } : { opacity: 0 }}
             transition={{ delay: tokens.length * 0.1 + 0.6 }}
@@ -234,7 +234,7 @@ function EmbeddingLayer() {
         {/* ── Skills / Technical depth ─────────────────── */}
         <div>
           <motion.p
-            className="font-mono text-xs text-white/20 uppercase tracking-widest mb-5 text-center"
+            className="font-mono text-xs text-white/45 uppercase tracking-widest mb-5 text-center"
             initial={{ opacity: 0 }}
             animate={revealed ? { opacity: 1 } : { opacity: 0 }}
             transition={{ delay: 0.25 }}
