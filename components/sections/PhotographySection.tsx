@@ -18,7 +18,7 @@ export default function PhotographySection() {
               <h2 id="photography-title" className="pb-[0.14em] text-5xl font-semibold leading-[1.05] tracking-[-0.045em] text-paper sm:text-6xl">What I notice when<br />I&apos;m <span className="editorial-serif font-normal italic text-knicks-orange">not coding</span>.</h2>
             </div>
             <div className="lg:col-span-4">
-              <p className="text-base leading-7 text-paper-muted">Most of my photos come from hikes, shorelines, and ordinary moments that felt worth keeping. I like turning those small details into stories I can share later.</p>
+              <p className="text-base leading-7 text-paper-muted">Most of my photos come from hikes, shorelines, and ordinary moments that felt worth keeping. I like turning those small moments into stories I can share later.</p>
               <div className="mt-5 flex items-center gap-3 font-mono text-[9px] uppercase tracking-[0.16em] text-paper/35"><Camera size={14} className="text-knicks-orange" /> Fujifilm X100VI · 23mm f/2</div>
             </div>
           </div>
