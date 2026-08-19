@@ -114,7 +114,7 @@ function NeuralBackground() {
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = `rgba(6,182,212,${alpha})`;
+            ctx.strokeStyle = `rgba(245,132,38,${alpha})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
@@ -133,7 +133,7 @@ function NeuralBackground() {
             ctx.beginPath();
             ctx.moveTo(mouse.x, mouse.y);
             ctx.lineTo(node.x, node.y);
-            ctx.strokeStyle = `rgba(6,182,212,${t * 0.45})`;
+            ctx.strokeStyle = `rgba(245,132,38,${t * 0.45})`;
             ctx.lineWidth = t * 1.2;
             ctx.stroke();
           }
@@ -142,8 +142,8 @@ function NeuralBackground() {
         // Cursor dot with glow
         ctx.beginPath();
         ctx.arc(mouse.x, mouse.y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(6,182,212,0.9)";
-        ctx.shadowColor = "rgba(6,182,212,0.8)";
+        ctx.fillStyle = "rgba(245,132,38,0.9)";
+        ctx.shadowColor = "rgba(245,132,38,0.8)";
         ctx.shadowBlur = 12;
         ctx.fill();
         ctx.shadowBlur = 0;
@@ -164,7 +164,7 @@ function NeuralBackground() {
 
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(6,182,212,${opacity})`;
+        ctx.fillStyle = `rgba(245,132,38,${opacity})`;
         ctx.fill();
       }
 

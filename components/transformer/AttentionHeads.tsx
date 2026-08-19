@@ -78,7 +78,7 @@ function AttentionHeadCard({
 
       {/* Attended tokens */}
       <div className="flex flex-wrap gap-1.5">
-        <span className="text-white/25 font-mono text-xs mr-1">attends:</span>
+        <span className="text-white/50 font-mono text-xs mr-1">attends:</span>
         {head.tokens.map((token) => (
           <span
             key={token}
@@ -140,7 +140,7 @@ function AttentionHeads() {
 
       {/* Heads = num_heads diagram */}
       <motion.p
-        className="font-mono text-xs text-white/20 mb-12"
+        className="font-mono text-xs text-white/45 mb-12"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={defaultViewport}
@@ -164,7 +164,7 @@ function AttentionHeads() {
 
       {/* Concat annotation */}
       <motion.div
-        className="mt-10 font-mono text-xs text-white/20 text-center"
+        className="mt-10 font-mono text-xs text-white/45 text-center"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={defaultViewport}

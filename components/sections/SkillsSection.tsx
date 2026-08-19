@@ -16,8 +16,8 @@ const categoryLabels: Record<string, string> = {
 const categoryOrder = ["lang", "ml", "framework", "data", "infra"];
 
 const skillColors: Record<string, string> = {
-  lang: "border-cyber-cyan/30 text-cyber-cyan/80",
-  framework: "border-cyber-purple/30 text-cyber-purple/80",
+  lang: "border-knicks-orange/30 text-knicks-orange/80",
+  framework: "border-knicks-blue/30 text-knicks-blue/80",
   ml: "border-amber-400/30 text-amber-400/80",
   data: "border-teal-400/30 text-teal-400/80",
   infra: "border-sky-400/30 text-sky-400/80",
@@ -45,7 +45,7 @@ function SkillsSection() {
         whileInView="visible"
         viewport={defaultViewport}
       >
-        <p className="font-mono text-xs text-cyber-cyan/50 uppercase tracking-widest mb-2">
+        <p className="font-mono text-xs text-knicks-orange/50 uppercase tracking-widest mb-2">
           / skills
         </p>
         <h2 className="text-3xl sm:text-4xl font-bold text-white">
@@ -67,7 +67,7 @@ function SkillsSection() {
               viewport={defaultViewport}
               transition={{ delay: ci * 0.08 }}
             >
-              <p className="font-mono text-xs text-white/30 uppercase tracking-widest mb-4">
+              <p className="font-mono text-xs text-white/50 uppercase tracking-widest mb-4">
                 {categoryLabels[cat]}
               </p>
               <motion.div

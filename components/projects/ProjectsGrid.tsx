@@ -1,11 +1,13 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import type { Project } from "@/lib/projects";
+import type { Project, ProjectCategory } from "@/lib/projects";
+import { PROJECT_CATEGORIES, getProjectCategories } from "@/lib/projects";
 import ProjectCard from "./ProjectCard";
 import { defaultViewport, staggerContainer, fadeUpVariants } from "@/lib/animation";
+import { cn } from "@/lib/utils";
 
 interface ProjectsGridProps {
   projects: Project[];
@@ -15,14 +17,31 @@ interface ProjectsGridProps {
 const INITIAL_COUNT = 6;
 
 function ProjectsGrid({ projects, showAll = false }: ProjectsGridProps) {
-  const displayedProjects = showAll ? projects : projects.slice(0, INITIAL_COUNT);
-  const hasMore = projects.length > INITIAL_COUNT;
+  const [activeCategory, setActiveCategory] = useState<ProjectCategory | null>(null);
+
+  const availableCategories = useMemo(
+    () =>
+      PROJECT_CATEGORIES.filter((category) =>
+        projects.some((p) => getProjectCategories(p).includes(category))
+      ),
+    [projects]
+  );
+
+  const filteredProjects = activeCategory
+    ? projects.filter((p) => getProjectCategories(p).includes(activeCategory))
+    : projects;
+
+  // Filtered sets are already narrow, so skip the "show more" cap once a
+  // category is selected — the person filtering wants to see all of them.
+  const displayedProjects =
+    showAll || activeCategory ? filteredProjects : filteredProjects.slice(0, INITIAL_COUNT);
+  const hasMore = !activeCategory && projects.length > INITIAL_COUNT;
 
   if (projects.length === 0) {
     return (
       <div className="py-20 text-center">
-        <p className="text-white/30 font-mono text-sm">No projects found.</p>
-        <p className="text-white/20 text-xs mt-2">
+        <p className="text-white/50 font-mono text-sm">No projects found.</p>
+        <p className="text-white/45 text-xs mt-2">
           Check back soon — GitHub data is fetched hourly.
         </p>
       </div>
@@ -31,7 +50,38 @@ function ProjectsGrid({ projects, showAll = false }: ProjectsGridProps) {
 
   return (
     <div>
+      {availableCategories.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-8">
+          <button
+            onClick={() => setActiveCategory(null)}
+            className={cn(
+              "px-3.5 py-1.5 rounded-lg border text-sm font-mono transition-all duration-200",
+              activeCategory === null
+                ? "border-knicks-orange/40 bg-knicks-orange/8 text-knicks-orange"
+                : "border-white/10 text-white/50 hover:text-white hover:border-white/25"
+            )}
+          >
+            All
+          </button>
+          {availableCategories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={cn(
+                "px-3.5 py-1.5 rounded-lg border text-sm font-mono transition-all duration-200",
+                activeCategory === category
+                  ? "border-knicks-orange/40 bg-knicks-orange/8 text-knicks-orange"
+                  : "border-white/10 text-white/50 hover:text-white hover:border-white/25"
+              )}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      )}
+
       <motion.div
+        key={activeCategory ?? "all"}
         className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"
         variants={staggerContainer}
         initial="hidden"

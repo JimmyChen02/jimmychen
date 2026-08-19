@@ -8,50 +8,34 @@ export interface Stage {
   id: string;
   label: string;
   shortLabel: string;
-  color: "cyan" | "purple" | "teal" | "amber" | "blue";
+  color: "orange" | "blue";
 }
 
+// Alternates orange/blue down the pipeline — matches the Knicks accent used
+// inside each stage's own content, instead of a separate unrelated hue.
 export const STAGES: Stage[] = [
-  { id: "hero", label: "Raw Input", shortLabel: "Input", color: "cyan" },
-  { id: "tokenization", label: "Tokenization", shortLabel: "Token", color: "cyan" },
-  { id: "embedding", label: "Embedding", shortLabel: "Embed", color: "purple" },
-  { id: "encoder", label: "Encoder", shortLabel: "Enc", color: "teal" },
-  { id: "attention", label: "Multi-Head Attention", shortLabel: "Attn", color: "amber" },
-  { id: "feedforward", label: "Feed-Forward", shortLabel: "FFN", color: "amber" },
-  { id: "decoder", label: "Output", shortLabel: "Out", color: "purple" },
-  { id: "output", label: "Generated", shortLabel: "Gen", color: "cyan" },
+  { id: "hero", label: "Raw Input", shortLabel: "Input", color: "orange" },
+  { id: "tokenization", label: "Tokenization", shortLabel: "Token", color: "blue" },
+  { id: "embedding", label: "Embedding", shortLabel: "Embed", color: "orange" },
+  { id: "encoder", label: "Encoder", shortLabel: "Enc", color: "blue" },
+  { id: "attention", label: "Multi-Head Attention", shortLabel: "Attn", color: "orange" },
+  { id: "feedforward", label: "Feed-Forward", shortLabel: "FFN", color: "blue" },
+  { id: "decoder", label: "Output", shortLabel: "Out", color: "orange" },
+  { id: "output", label: "Generated", shortLabel: "Gen", color: "blue" },
 ];
 
 const colorStyles: Record<Stage["color"], { dot: string; text: string; line: string; glow: string }> = {
-  cyan: {
-    dot: "bg-cyber-cyan",
-    text: "text-cyber-cyan",
-    line: "bg-cyber-cyan",
+  orange: {
+    dot: "bg-knicks-orange",
+    text: "text-knicks-orange",
+    line: "bg-knicks-orange",
     glow: "shadow-glow-sm",
   },
-  purple: {
-    dot: "bg-cyber-purple",
-    text: "text-cyber-purple",
-    line: "bg-cyber-purple",
-    glow: "shadow-glow-purple",
-  },
-  teal: {
-    dot: "bg-teal-400",
-    text: "text-teal-400",
-    line: "bg-teal-400",
-    glow: "",
-  },
-  amber: {
-    dot: "bg-amber-400",
-    text: "text-amber-400",
-    line: "bg-amber-400",
-    glow: "",
-  },
   blue: {
-    dot: "bg-sky-400",
-    text: "text-sky-400",
-    line: "bg-sky-400",
-    glow: "",
+    dot: "bg-knicks-blue",
+    text: "text-knicks-blue",
+    line: "bg-knicks-blue",
+    glow: "shadow-glow-purple",
   },
 };
 
@@ -91,7 +75,7 @@ export const PipelineStageIndicator = memo(function PipelineStageIndicator({
       <span
         className={cn(
           "font-mono text-xs transition-all duration-300 truncate",
-          isActive ? `${c.text} font-semibold` : isPast ? "text-white/40" : "text-white/20"
+          isActive ? `${c.text} font-semibold` : isPast ? "text-white/40" : "text-white/45"
         )}
       >
         {stage.shortLabel}

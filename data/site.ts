@@ -11,6 +11,39 @@ export const siteConfig = {
   linkedin: "https://linkedin.com/in/jimmychen02",
   resumeUrl: "/resume.pdf",
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://jimmychen.dev",
+  availability: "Open to software engineering, ML, and research opportunities",
+
+  education: {
+    school: "Cornell University, College of Engineering",
+    degree: "B.S. in Computer Science",
+    minor: "Minor in Artificial Intelligence",
+    expected: "Expected May 2028",
+    location: "Ithaca, NY",
+  },
+
+  experience: [
+    {
+      role: "Research Intern",
+      organization: "SEAL, Cornell University",
+      period: "May 2026 - Aug 2026",
+      summary:
+        "Reproduced TrainCheck's evaluation on real-world ML training traces and detected invariant violations in 7 of 10 supplied bug traces, informing runtime-monitor specification generation.",
+    },
+    {
+      role: "Research Assistant",
+      organization: "SciFi Lab, Cornell University",
+      period: "Feb 2026 - Present",
+      summary:
+        "Built SwiftUI keyboard-research apps, an automated analytics pipeline, and an on-device grip classifier reaching about 95% accuracy while reducing input latency by 73%.",
+    },
+    {
+      role: "Web Developer Intern",
+      organization: "New York Tutoring Center",
+      period: "Jun 2023 - Nov 2023",
+      summary:
+        "Launched a production site for 100+ students, increasing traffic by 40% and engagement by 60% while managing user data and version control.",
+    },
+  ],
 
   // Hero section
   hero: {

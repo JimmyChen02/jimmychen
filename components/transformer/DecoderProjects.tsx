@@ -47,11 +47,11 @@ function ProjectCard({
       <div className="flex flex-col flex-1">
       {/* Header row */}
       <div className="flex items-start justify-between mb-2">
-        <span className="font-mono text-[10px] text-white/20">output_token[{index}]</span>
+        <span className="font-mono text-[10px] text-white/45">output_token[{index}]</span>
         <div className="flex items-center gap-3">
-          <span className="font-mono text-xs text-white/30">p =</span>
+          <span className="font-mono text-xs text-white/50">p =</span>
           <motion.span
-            className="font-mono text-sm font-bold text-cyber-cyan"
+            className="font-mono text-sm font-bold text-knicks-orange"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={defaultViewport}
@@ -62,13 +62,13 @@ function ProjectCard({
           <div className="flex gap-1.5">
             {project.githubUrl && (
               <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
-                className="text-white/25 hover:text-cyber-cyan transition-colors">
+                className="text-white/50 hover:text-knicks-orange transition-colors">
                 <Github size={14} />
               </a>
             )}
             {project.demoUrl && (
               <a href={project.demoUrl} target="_blank" rel="noopener noreferrer"
-                className="text-white/25 hover:text-cyber-cyan transition-colors">
+                className="text-white/50 hover:text-knicks-orange transition-colors">
                 <ExternalLink size={14} />
               </a>
             )}
@@ -88,7 +88,7 @@ function ProjectCard({
       </div>
 
       {/* Title + description */}
-      <h3 className="font-semibold text-white group-hover:text-cyber-cyan transition-colors mb-1.5 text-base leading-snug">
+      <h3 className="font-semibold text-white group-hover:text-knicks-orange transition-colors mb-1.5 text-base leading-snug">
         {project.title}
       </h3>
       <p className="text-white/50 text-sm leading-relaxed mb-4 flex-1">
@@ -101,7 +101,7 @@ function ProjectCard({
       <div className="space-y-1.5 mb-4">
         {SCORE_DIMS.map((dim, i) => (
           <div key={dim} className="flex items-center gap-2">
-            <span className="font-mono text-[10px] text-white/25 w-24 text-right shrink-0">{dim}</span>
+            <span className="font-mono text-[10px] text-white/50 w-24 text-right shrink-0">{dim}</span>
             <div className="flex-1 h-0.5 bg-white/5 rounded-full overflow-hidden">
               <motion.div
                 className={`h-full ${DIM_COLOR[dim]} rounded-full`}
@@ -111,7 +111,7 @@ function ProjectCard({
                 transition={{ duration: 0.7, delay: index * 0.1 + i * 0.06 + 0.2, ease: [0.16, 1, 0.3, 1] }}
               />
             </div>
-            <span className="font-mono text-[10px] text-white/30 w-6 shrink-0">
+            <span className="font-mono text-[10px] text-white/50 w-6 shrink-0">
               {(scores[dim] ?? 0).toFixed(2)}
             </span>
           </div>
@@ -121,13 +121,13 @@ function ProjectCard({
       {/* Tags + meta */}
       <div className="flex flex-wrap gap-1.5 mb-3">
         {project.tags.slice(0, 4).map((tag) => (
-          <span key={tag} className="px-2 py-0.5 rounded text-[10px] font-mono border border-white/8 text-white/35 bg-white/3">
+          <span key={tag} className="px-2 py-0.5 rounded text-[10px] font-mono border border-white/8 text-white/50 bg-white/3">
             {tag}
           </span>
         ))}
       </div>
       {updatedLabel && (
-        <div className="flex items-center gap-1 text-[10px] text-white/20 font-mono">
+        <div className="flex items-center gap-1 text-[10px] text-white/45 font-mono">
           <Clock size={10} />
           {updatedLabel}
         </div>

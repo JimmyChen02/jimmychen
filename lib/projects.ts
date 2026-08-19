@@ -46,7 +46,9 @@ function projectFromOverride(override: ProjectOverride): Project {
     slug: override.slug,
     description: override.description ?? "",
     tags: override.tags ?? [],
-    githubUrl: `https://github.com/${process.env.NEXT_PUBLIC_GITHUB_USERNAME ?? "JimmyChen02"}/${override.slug}`,
+    githubUrl:
+      override.githubUrl ??
+      `https://github.com/${process.env.NEXT_PUBLIC_GITHUB_USERNAME ?? "JimmyChen02"}/${override.slug}`,
     demoUrl: override.demoUrl ?? null,
     language: null,
     languages: {},
@@ -70,7 +72,7 @@ function mergeProject(repo: EnrichedRepo, override: ProjectOverride | undefined)
     slug: repo.name,
     description: override?.description ?? repo.description ?? "",
     tags: mergedTags,
-    githubUrl: repo.html_url,
+    githubUrl: override?.githubUrl ?? repo.html_url,
     demoUrl: override?.demoUrl ?? repo.homepage ?? null,
     language: repo.language,
     languages: repo.languages,
@@ -117,6 +119,52 @@ export function mergeProjects(repos: EnrichedRepo[]): Project[] {
 /** Return only featured projects, ordered by the `order` field. */
 export function getFeaturedProjects(projects: Project[]): Project[] {
   return projects.filter((p) => p.featured).sort((a, b) => a.order - b.order);
+}
+
+/**
+ * Coarse CS-area categories for filtering the projects grid.
+ * Derived from each project's existing tags/GitHub topics — a project can
+ * match more than one (e.g. an iOS app that's also an ML project).
+ */
+export const PROJECT_CATEGORIES = [
+  "Full-Stack",
+  "iOS",
+  "ML",
+  "Research",
+  "Systems",
+  "Game Dev",
+] as const;
+
+export type ProjectCategory = (typeof PROJECT_CATEGORIES)[number];
+
+/** Lowercased tag/topic → category. Only unambiguous signals are mapped. */
+const CATEGORY_TAG_MAP: Record<string, ProjectCategory> = {
+  // iOS
+  swiftui: "iOS", ios: "iOS", mapkit: "iOS", healthkit: "iOS", uikit: "iOS", xcode: "iOS",
+  // ML
+  ml: "ML", "ai/ml": "ML", ai: "ML", "machine learning": "ML", pytorch: "ML",
+  tensorflow: "ML", nlp: "ML", llm: "ML", llms: "ML", "deep learning": "ML",
+  // Research
+  research: "Research", hci: "Research", "data visualization": "Research",
+  // Full-Stack
+  react: "Full-Stack", "next.js": "Full-Stack", nextjs: "Full-Stack", fastapi: "Full-Stack",
+  postgresql: "Full-Stack", aws: "Full-Stack", supabase: "Full-Stack", django: "Full-Stack",
+  "node.js": "Full-Stack", nodejs: "Full-Stack", express: "Full-Stack", docker: "Full-Stack",
+  // Systems
+  systems: "Systems", networking: "Systems", multithreading: "Systems", tcp: "Systems",
+  concurrency: "Systems", "operating systems": "Systems", compilers: "Systems",
+  // Game Dev
+  "game dev": "Game Dev", "game development": "Game Dev", raylib: "Game Dev", unity: "Game Dev",
+};
+
+/** Every category a project matches, derived from its tags. Order follows PROJECT_CATEGORIES. */
+export function getProjectCategories(project: Project): ProjectCategory[] {
+  const matched = new Set<ProjectCategory>();
+  for (const tag of project.tags) {
+    const category = CATEGORY_TAG_MAP[tag.toLowerCase()];
+    if (category) matched.add(category);
+  }
+  return PROJECT_CATEGORIES.filter((c) => matched.has(c));
 }
 
 /** Format a date string as "Jan 2024" for display. */

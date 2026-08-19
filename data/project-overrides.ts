@@ -26,6 +26,8 @@ export interface ProjectOverride {
   hidden?: boolean;
   /** Custom demo / live URL */
   demoUrl?: string;
+  /** Override the GitHub repo URL — for repos not under your own account (e.g. a collaborator's). */
+  githubUrl?: string;
   /** Custom ranking scores (0–1) */
   scores?: {
     aiml?: number;
@@ -39,55 +41,59 @@ export interface ProjectOverride {
 
 export const projectOverrides: ProjectOverride[] = [
   {
-    slug: "adaptive-keyboard",
+    slug: "ios-typing-data-collector",
     title: "Adaptive Keyboard Research",
     description:
-      "Behavior-aware mobile keyboard that adapts invisible key regions using touch distributions and language-model priors. Built as an undergraduate research project exploring HCI and ML.",
+      "Built two SwiftUI research apps that model per-key touch distributions and capture multimodal typing data. Shipped on-device grip classification at ~95% accuracy and cut input latency by 73%.",
     tags: ["SwiftUI", "ML", "HCI", "Data Visualization", "Research"],
     featured: true,
     order: 1,
     scores: { aiml: 0.96, research: 0.97, product: 0.88, systems: 0.72 },
   },
   {
-    slug: "cloud-password-manager",
+    slug: "PasswordManager",
     title: "Cloud Password Manager",
     description:
       "Secure password manager using AES-256 encryption, PBKDF2 key derivation, PostgreSQL, and AWS infrastructure. End-to-end encrypted with zero-knowledge design.",
     tags: ["Python", "PostgreSQL", "AWS", "Cryptography", "FastAPI"],
     featured: true,
-    order: 2,
+    order: 4,
     scores: { aiml: 0.45, systems: 0.92, product: 0.89, research: 0.55 },
   },
   {
-    slug: "multithreaded-chat-server",
+    slug: "Multithreaded-Chat-Server",
     title: "Multithreaded Chat Server",
     description:
       "Java TCP chat server with real-time messaging, private channels, and thread-safe client handling. Designed for concurrency correctness under load.",
     tags: ["Java", "TCP", "Multithreading", "Systems", "Networking"],
     featured: true,
-    order: 3,
+    order: 5,
     scores: { aiml: 0.2, systems: 0.95, product: 0.65, research: 0.4 },
   },
   {
     slug: "cameldew-valley",
     title: "Cameldew Valley",
     description:
-      "2D farming simulator built in OCaml with real-time rendering, full game-state management, save/load, and a persistent SQLite leaderboard.",
+      "Co-built a 5,000+ line OCaml farming simulator on a four-person Agile team, leading core state and pause systems plus an automated test suite reaching 80%+ coverage.",
+    githubUrl: "https://github.com/alexstrugacz/cameldew-valley",
     tags: ["OCaml", "Raylib", "SQLite", "Game Dev", "Functional Programming"],
     featured: true,
-    order: 4,
+    order: 2,
     scores: { aiml: 0.2, systems: 0.78, product: 0.82, research: 0.35 },
   },
   {
-    slug: "stridr",
+    slug: "Stridr",
     title: "Stridr",
     description:
-      "iOS run tracking app with live map rendering, GPS route tracking, and HealthKit integrations. Built with SwiftUI and Supabase backend.",
+      "Built a full-stack iOS running app with real-time GPS tracking, Supabase-backed workout history, magic-link authentication, and HealthKit sync.",
     tags: ["SwiftUI", "MapKit", "HealthKit", "Supabase", "iOS"],
     featured: true,
-    order: 5,
+    order: 3,
     scores: { aiml: 0.35, systems: 0.7, product: 0.9, research: 0.3 },
   },
+  // Hidden — noise repos we don't want surfaced as project cards.
+  { slug: "TravelPageDesign", hidden: true },
+  { slug: "JimJaydenProject", hidden: true },
 ];
 
 /**
@@ -96,19 +102,19 @@ export const projectOverrides: ProjectOverride[] = [
  */
 export const softmaxRanking = [
   {
-    slug: "adaptive-keyboard",
+    slug: "ios-typing-data-collector",
     title: "Adaptive Keyboard Research",
     overallScore: 0.96,
     scores: { "AI/ML Fit": 0.96, "Systems Depth": 0.72, "Product Polish": 0.88, "Research Impact": 0.97 },
   },
   {
-    slug: "cloud-password-manager",
+    slug: "PasswordManager",
     title: "Cloud Password Manager",
     overallScore: 0.89,
     scores: { "AI/ML Fit": 0.45, "Systems Depth": 0.92, "Product Polish": 0.89, "Research Impact": 0.55 },
   },
   {
-    slug: "multithreaded-chat-server",
+    slug: "Multithreaded-Chat-Server",
     title: "Multithreaded Chat Server",
     overallScore: 0.85,
     scores: { "AI/ML Fit": 0.2, "Systems Depth": 0.95, "Product Polish": 0.65, "Research Impact": 0.4 },
@@ -120,7 +126,7 @@ export const softmaxRanking = [
     scores: { "AI/ML Fit": 0.2, "Systems Depth": 0.78, "Product Polish": 0.82, "Research Impact": 0.35 },
   },
   {
-    slug: "stridr",
+    slug: "Stridr",
     title: "Stridr",
     overallScore: 0.78,
     scores: { "AI/ML Fit": 0.35, "Systems Depth": 0.7, "Product Polish": 0.9, "Research Impact": 0.3 },

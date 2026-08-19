@@ -115,7 +115,7 @@ function VerticalPipeline() {
           transition={{ duration: 0.4 }}
           aria-label="Transformer pipeline navigation"
         >
-          <p className="font-mono text-xs text-white/20 uppercase tracking-widest mb-3 ml-3">
+          <p className="font-mono text-xs text-white/45 uppercase tracking-widest mb-3 ml-3">
             Pipeline
           </p>
 
@@ -125,7 +125,7 @@ function VerticalPipeline() {
                 {index > 0 && (
                   <div
                     className={`w-px h-3 transition-colors duration-300 ${
-                      index <= activeIndex ? "bg-cyber-cyan/40" : "bg-white/8"
+                      index <= activeIndex ? "bg-knicks-orange/40" : "bg-white/8"
                     }`}
                   />
                 )}
